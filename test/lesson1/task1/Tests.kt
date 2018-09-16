@@ -105,4 +105,9 @@ class Tests {
         assertEquals(874, numberRevert(478))
         assertEquals(201, numberRevert(102))
     }
+
+    @Test
+    fun test() {
+        println(5 / 10)
+    }
 }
