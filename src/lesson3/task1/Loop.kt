@@ -4,7 +4,8 @@ package lesson3.task1
 
 
 
-import lesson1.task1.*
+import lesson1.task1.sqr
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.sqrt
 
@@ -16,7 +17,7 @@ import kotlin.math.sqrt
 fun factorial(n: Int): Double {
     var result = 1.0
     for (i in 1..n) {
-        result = result * i // Please do not fix in master
+        result *= i // Please do not fix in master
     }
     return result
 }
@@ -175,8 +176,9 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
+    TODO()
     val a = ceil(sqrt(m.toDouble())).toInt()
-    return (a * a) <= n
+    return sqr(a) <= n
 }
 
 /**
@@ -215,7 +217,17 @@ fun collatzSteps(x: Int): Int {
  * sin(x) = x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun sin(x: Double, eps: Double): Double = TODO()
+fun sin(x: Double, eps: Double): Double {
+    var sin: Double = x
+    var n = 2
+    var a = x
+    while (abs(a) > eps) {
+        a = (-1) * a * x * x / (n * (n + 1)).toDouble()
+        n += 2
+        sin += a
+    }
+    return sin
+}
 
 /**
  * Средняя
