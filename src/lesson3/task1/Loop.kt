@@ -3,8 +3,8 @@
 package lesson3.task1
 
 
-
 import lesson1.task1.sqr
+import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.sqrt
@@ -218,12 +218,25 @@ fun collatzSteps(x: Int): Int {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double {
-    var sin: Double = x
-    var n = 2
+    /*var n = 2
     var a = x
     while (abs(a) > eps) {
         a = (-1) * a * x * x / (n * (n + 1)).toDouble()
         n += 2
+        sin += a
+    }
+    return sin*/
+    var eq_x = x
+    while (eq_x !in -PI / 2.0..PI / 2) {
+        if (eq_x < -PI / 2.0) eq_x += PI * 2.0
+        else if (eq_x > PI / 2.0) eq_x -= PI * 2.0
+    }
+    var sin: Double = eq_x
+    var a: Double = eq_x
+    var n = 1
+    while (abs(a) > eps) {
+        n += 2
+        a *= (-1) * eq_x * eq_x / factorial(n)
         sin += a
     }
     return sin
@@ -236,7 +249,23 @@ fun sin(x: Double, eps: Double): Double {
  * cos(x) = 1 - x^2 / 2! + x^4 / 4! - x^6 / 6! + ...
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
-fun cos(x: Double, eps: Double): Double = TODO()
+fun cos(x: Double, eps: Double): Double {
+    var eq_x = x
+    var cos = 1.0
+    var a = 1.0
+    var n = 0.0
+    while (eq_x !in 0.0..PI) {
+        if (eq_x < 0) eq_x += PI * 2.0
+        else if (eq_x > 2.0 * PI) eq_x -= PI * 2.0
+    }
+    while (abs(a) >= eps) {
+        a *= ((-1.0) * eq_x * eq_x / (n + 1.0) / (n + 2.0))
+        n += 2
+        cos += a
+    }
+
+    return cos
+}
 
 /**
  * Средняя
@@ -245,7 +274,16 @@ fun cos(x: Double, eps: Double): Double = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun revert(n: Int): Int = TODO()
+fun revert(n: Int): Int {
+    var a = n
+    var new = 0
+    while (a > 0) {
+        new *= 10
+        new += a % 10
+        a /= 10
+    }
+    return new
+}
 
 /**
  * Средняя
@@ -256,7 +294,19 @@ fun revert(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun isPalindrome(n: Int): Boolean = TODO()
+fun isPalindrome(n: Int): Boolean {
+    val len_n = digitNumber(n)
+    var left_border = 1
+    var right_border = 10
+    for (i in 1..len_n) left_border *= 10
+    while (left_border > right_border) {
+        if ((n % left_border / (left_border / 10)) != (n % right_border / (right_border / 10)))
+            return false
+        left_border /= 10
+        right_border *= 10
+    }
+    return true
+}
 
 /**
  * Средняя
@@ -266,7 +316,15 @@ fun isPalindrome(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun hasDifferentDigits(n: Int): Boolean = TODO()
+fun hasDifferentDigits(n: Int): Boolean {
+    var num = n / 10
+    val first_digit = n % 10
+    while (num > 0) {
+        if (first_digit != num % 10) return true
+        num /= 10
+    }
+    return false
+}
 
 /**
  * Сложная
@@ -277,7 +335,20 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    var k = 1
+    var prev_len = 1
+    while (prev_len < n) {
+        k += 1
+        prev_len += digitNumber(sqr(k))
+    }
+    var cur_square = sqr(k)
+    val dif = prev_len - n
+    for (i in 1..dif) {
+        cur_square /= 10
+    }
+    return cur_square % 10
+}
 
 /**
  * Сложная
@@ -288,4 +359,24 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int {
+    // Я не использовал уже написанную функцию для поиска числа фибоначи для того,
+    // чтобы не искать каждое число начиная с 1
+    if (n in 1..2) return 1
+    val last_numbers = IntArray(2)
+    last_numbers[0] = 1
+    last_numbers[1] = 1
+    var i = 0
+    var prev_len = 2
+    while (prev_len < n) {
+        i++
+        last_numbers[i % 2] = last_numbers[0] + last_numbers[1]
+        prev_len += digitNumber(last_numbers[i % 2])
+    }
+    var cur_fib = last_numbers[i % 2]
+    val dif = prev_len - n
+    for (j in 1..dif) {
+        cur_fib /= 10
+    }
+    return cur_fib % 10
+}

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import kotlin.math.PI
+import kotlin.math.cos
 
 class Tests {
     @Test
@@ -110,7 +111,7 @@ class Tests {
         assertEquals(97, minDivisor(97))
         assertEquals(7, minDivisor(49))
         assertEquals(17, minDivisor(8653))
-        assertEquals(2124679 , minDivisor(2124679 ))
+        assertEquals(2124679, minDivisor(2124679))
         assertEquals(1073676287, minDivisor(1073676287))
         assertEquals(Int.MAX_VALUE, minDivisor(Int.MAX_VALUE))
     }
@@ -124,7 +125,7 @@ class Tests {
         assertEquals(17, maxDivisor(34))
         assertEquals(7, maxDivisor(49))
         assertEquals(509, maxDivisor(8653))
-        assertEquals(1 , maxDivisor(2124679 ))
+        assertEquals(1, maxDivisor(2124679))
         assertEquals(1, maxDivisor(1073676287))
         assertEquals(1, maxDivisor(Int.MAX_VALUE))
     }
@@ -172,16 +173,19 @@ class Tests {
     @Test
     @Tag("Normal")
     fun sin() {
+        assertEquals(0.70710678118, sin(PI / 4, 1e-5), 1e-5)
+        //assertEquals(0.90929742682, sin(2.0, 1e-5), 1e-5)
+        assertEquals(-1.0, sin(3.0 * PI / 2.0, 1e-5), 1e-5)
         assertEquals(0.0, sin(0.0, 1e-5), 1e-5)
         assertEquals(1.0, sin(PI / 2.0, 1e-5), 1e-5)
         assertEquals(0.0, sin(PI, 1e-5), 1e-5)
-        assertEquals(-1.0, sin(3.0 * PI / 2.0, 1e-5), 1e-5)
         assertEquals(0.0, sin(100 * PI, 1e-5), 1e-5)
     }
 
     @Test
     @Tag("Normal")
     fun cos() {
+        assertEquals(-0.41614683654, cos(1.0, 1e-5), 1e-5)
         assertEquals(1.0, cos(0.0, 1e-5), 1e-5)
         assertEquals(0.0, cos(PI / 2.0, 1e-5), 1e-5)
         assertEquals(-1.0, cos(PI, 1e-5), 1e-5)
@@ -222,12 +226,14 @@ class Tests {
     @Test
     @Tag("Hard")
     fun squareSequenceDigit() {
+        assertEquals(4, squareSequenceDigit(2))
         assertEquals(1, squareSequenceDigit(1))
         assertEquals(4, squareSequenceDigit(2))
         assertEquals(5, squareSequenceDigit(7))
         assertEquals(6, squareSequenceDigit(12))
         assertEquals(0, squareSequenceDigit(17))
         assertEquals(9, squareSequenceDigit(27))
+
     }
 
     @Test

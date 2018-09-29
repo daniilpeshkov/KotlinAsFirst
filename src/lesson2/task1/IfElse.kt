@@ -2,7 +2,7 @@
 
 package lesson2.task1
 
-import com.sun.org.apache.xpath.internal.operations.Bool
+
 import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import kotlin.math.abs

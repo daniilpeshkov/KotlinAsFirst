@@ -195,6 +195,7 @@ class Tests {
     @Test
     @Tag("Normal")
     fun decimal() {
+        assertEquals(0, decimal(listOf(), 2))
         assertEquals(1, decimal(listOf(1), 2))
         assertEquals(100, decimal(listOf(1, 2, 1, 0), 4))
         assertEquals(250, decimal(listOf(1, 3, 12), 14))
@@ -220,6 +221,7 @@ class Tests {
         assertEquals("MCMLXXVIII", roman(1978))
         assertEquals("DCXCIV", roman(694))
         assertEquals("XLIX", roman(49))
+        assertEquals("MCCLVII", roman(1257))
     }
 
     @Test
