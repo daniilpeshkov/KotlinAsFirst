@@ -143,7 +143,15 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
-    TODO()
+    for (keyA in a.keys) {
+        if (b.containsKey(keyA)) {
+            if (b[keyA] == a[keyA]) {
+                continue
+            }
+        }
+        return false
+    }
+    return true
 }
 
 /**
@@ -156,7 +164,20 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
  *   averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
-fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> = TODO()
+fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
+    val k: MutableMap<String, Int> = mutableMapOf()
+    val averagePrice: MutableMap<String, Double> = mutableMapOf()
+    for ((first, second) in stockPrices) {
+        if (k[first] == null) k[first] = 0
+        k[first] = k[first]!!.toInt() + 1
+        if (averagePrice[first] == null) averagePrice[first] = 0.0
+        averagePrice[first] = averagePrice[first]!!.toInt() + second
+    }
+    for (i in averagePrice.keys) {
+        averagePrice[i] = averagePrice[i]!!.toDouble() / k[i]!!.toDouble()
+    }
+    return averagePrice.toMap()
+}
 
 /**
  * Средняя
@@ -173,7 +194,22 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? = TODO()
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
+    var min = 0.0
+    var name = ""
+    for (curName in stuff.keys) {
+        if (stuff[curName]!!.first == kind) {
+            if (min == 0.0 || stuff[curName]!!.second < min) {
+                min = stuff[curName]!!.second
+                name = curName
+            }
+        }
+    }
+    return when (name) {
+        "" -> null
+        else -> name
+    }
+}
 
 /**
  * Сложная
