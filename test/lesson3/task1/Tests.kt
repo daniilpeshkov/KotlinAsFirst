@@ -174,7 +174,7 @@ class Tests {
     @Tag("Normal")
     fun sin() {
         assertEquals(0.70710678118, sin(PI / 4, 1e-5), 1e-5)
-        //assertEquals(0.90929742682, sin(2.0, 1e-5), 1e-5)
+        assertEquals(0.90929742682, sin(2.0, 1e-5), 1e-5)
         assertEquals(-1.0, sin(3.0 * PI / 2.0, 1e-5), 1e-5)
         assertEquals(0.0, sin(0.0, 1e-5), 1e-5)
         assertEquals(1.0, sin(PI / 2.0, 1e-5), 1e-5)
@@ -185,7 +185,6 @@ class Tests {
     @Test
     @Tag("Normal")
     fun cos() {
-        assertEquals(-0.41614683654, cos(1.0, 1e-5), 1e-5)
         assertEquals(1.0, cos(0.0, 1e-5), 1e-5)
         assertEquals(0.0, cos(PI / 2.0, 1e-5), 1e-5)
         assertEquals(-1.0, cos(PI, 1e-5), 1e-5)

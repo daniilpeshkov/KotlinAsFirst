@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_PARAMETER")
-
 package lesson1.task1
 
 import kotlin.math.*
@@ -102,7 +100,8 @@ fun thirdDigit(number: Int): Int = number / 100 % 10
  * прибыл на станцию назначения в h2 часов m2 минут того же дня (например в 13:01).
  * Определите время поезда в пути в минутах (в данном случае 216).
  */
-fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int = (hoursArrive * 60 + minutesArrive) - (hoursDepart * 60 + minutesDepart)
+fun travelMinutes(hoursDepart: Int, minutesDepart: Int, hoursArrive: Int, minutesArrive: Int): Int =
+        (hoursArrive * 60 + minutesArrive) - (hoursDepart * 60 + minutesDepart)
 
 /**
  * Простая
@@ -134,6 +133,4 @@ fun numberRevert(number: Int): Int {
         tmp /= 10
     }
     return a
-    //var a = number.toString().reversed()
-    //return a.toInt()
 }

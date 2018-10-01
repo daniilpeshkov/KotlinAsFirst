@@ -4,10 +4,7 @@ package lesson3.task1
 
 
 import lesson1.task1.sqr
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * Пример
@@ -175,11 +172,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * то есть, существует ли такое целое k, что m <= k*k <= n.
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
-fun squareBetweenExists(m: Int, n: Int): Boolean {
-    TODO()
-    val a = ceil(sqrt(m.toDouble())).toInt()
-    return sqr(a) <= n
-}
+fun squareBetweenExists(m: Int, n: Int): Boolean = (floor(sqrt(n.toDouble())) - ceil(sqrt(m.toDouble()))) >= 0
 
 /**
  * Средняя
@@ -218,25 +211,20 @@ fun collatzSteps(x: Int): Int {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double {
-    /*var n = 2
-    var a = x
-    while (abs(a) > eps) {
-        a = (-1) * a * x * x / (n * (n + 1)).toDouble()
-        n += 2
-        sin += a
-    }
-    return sin*/
     var eq_x = x
-    while (eq_x !in -PI / 2.0..PI / 2) {
-        if (eq_x < -PI / 2.0) eq_x += PI * 2.0
-        else if (eq_x > PI / 2.0) eq_x -= PI * 2.0
+    while (eq_x !in 0.0..PI * 2.0) {
+        if (eq_x < 0) eq_x += PI * 2.0
+        else if (eq_x >= PI * 2.0) eq_x -= PI * 2.0
+    }
+    if (eq_x > PI / 2.0) {
+        eq_x = PI - eq_x
     }
     var sin: Double = eq_x
     var a: Double = eq_x
-    var n = 1
+    var n = 1.0
     while (abs(a) > eps) {
+        a *= (-1) * eq_x * eq_x / ((n + 1.0) * (n + 2.0))
         n += 2
-        a *= (-1) * eq_x * eq_x / factorial(n)
         sin += a
     }
     return sin
@@ -254,12 +242,15 @@ fun cos(x: Double, eps: Double): Double {
     var cos = 1.0
     var a = 1.0
     var n = 0.0
-    while (eq_x !in 0.0..PI) {
+    while (eq_x !in 0.0..PI * 2.0) {
         if (eq_x < 0) eq_x += PI * 2.0
-        else if (eq_x > 2.0 * PI) eq_x -= PI * 2.0
+        else if (eq_x >= PI * 2.0) eq_x -= PI * 2.0
     }
-    while (abs(a) >= eps) {
-        a *= ((-1.0) * eq_x * eq_x / (n + 1.0) / (n + 2.0))
+    if (eq_x > PI) {
+        eq_x = 2 * PI - eq_x
+    }
+    while (abs(a) > eps) {
+        a *= (-1.0) * eq_x * eq_x / ((n + 1.0) * (n + 2.0))
         n += 2
         cos += a
     }

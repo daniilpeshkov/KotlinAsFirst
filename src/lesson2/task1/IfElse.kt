@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_PARAMETER")
-
 package lesson2.task1
 
 
