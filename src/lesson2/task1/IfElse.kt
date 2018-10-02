@@ -72,7 +72,8 @@ fun ageDescription(age: Int): String {
             1 -> " год"
             in 2..4 -> " года"
             in 5..9 -> " лет"
-            else -> "сорри чувак"
+            0 -> " лет"
+            else -> ""
         }
     }
 }
@@ -131,7 +132,7 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           bishopX: Int, bishopY: Int): Int {
     var danger = 0
     if (kingX == rookX || kingY == rookY) danger += 1
-    if (abs(kingX - kingY) == abs(bishopX - bishopY) || kingX + kingY == bishopX + bishopY) danger += 2
+    if (abs(kingX - bishopX) == abs(kingY - bishopY)) danger += 2
     return danger
 }
 

@@ -29,7 +29,8 @@ fun isNumberHappy(number: Int): Boolean = (number % 10 + number / 10 % 10) == (n
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
-fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = x1 == x2 || y1 == y2 || abs(x1 - y1) == abs(x2 - y2)
+fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean = x1 == x2 || y1 == y2
+        || abs(x1 - x2) == abs(y1 - y2)
 
 
 /**
@@ -82,6 +83,5 @@ fun passes(a1: Int, b1: Int, a2: Int, b2: Int): Boolean {
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    return passes(a, b, r, s) || passes(a, c, r, s) || passes(b, c, r, s)
-}
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
+        passes(a, b, r, s) || passes(a, c, r, s) || passes(b, c, r, s)

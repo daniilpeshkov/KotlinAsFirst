@@ -75,7 +75,7 @@ fun digitNumber(n: Int): Int {
     } else {
         var a = 0
         var tmp = n
-        while (tmp > 0) {
+        while (tmp != 0) {
             a++
             tmp /= 10
         }
@@ -287,8 +287,8 @@ fun revert(n: Int): Int {
  */
 fun isPalindrome(n: Int): Boolean {
     val len_n = digitNumber(n)
-    var left_border = 1
-    var right_border = 10
+    var left_border: Long = 1
+    var right_border: Long = 10
     for (i in 1..len_n) left_border *= 10
     while (left_border > right_border) {
         if ((n % left_border / (left_border / 10)) != (n % right_border / (right_border / 10)))

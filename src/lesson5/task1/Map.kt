@@ -258,7 +258,13 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit = TO
  *
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
+    val inBoth: MutableList<String> = mutableListOf()
+    for (entry in a) {
+        if (b.contains(entry)) inBoth.add(entry)
+    }
+    return inBoth.toList()
+}
 
 /**
  * Средняя
@@ -269,7 +275,20 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = TODO()
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
+fun canBuildFrom(chars: List<Char>, word: String): Boolean {
+    val charsSummary: MutableMap<Char, Int> = mutableMapOf()
+    for (a: Char in word) {
+        if (charsSummary[a] == null) charsSummary[a] = 0
+        charsSummary[a] = charsSummary[a]!!.toInt() + 1
+    }
+    for (a: Char in chars) {
+        if (charsSummary.containsKey(a)) {
+            charsSummary[a] = charsSummary[a]!!.toInt() - 1
+        }
+    }
+
+    return true
+}
 
 /**
  * Средняя

@@ -41,6 +41,7 @@ class Tests {
         assertEquals("12 лет", ageDescription(12))
         assertEquals("111 лет", ageDescription(111))
         assertEquals("199 лет", ageDescription(199))
+        assertEquals("30 лет", ageDescription(30))
     }
 
     @Test
@@ -63,6 +64,7 @@ class Tests {
     @Test
     @Tag("Easy")
     fun rookOrBishopThreatens() {
+        assertEquals(0, rookOrBishopThreatens(2, 3, 1, 6, 2, 1))
         assertEquals(0, rookOrBishopThreatens(4, 5, 5, 7, 8, 8))
         assertEquals(1, rookOrBishopThreatens(2, 8, 6, 8, 1, 6))
         assertEquals(2, rookOrBishopThreatens(5, 4, 3, 7, 1, 8))
