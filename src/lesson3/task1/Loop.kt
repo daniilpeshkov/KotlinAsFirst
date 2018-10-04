@@ -70,17 +70,13 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun digitNumber(n: Int): Int {
-    return if (n == 0) {
-        1
-    } else {
-        var a = 0
-        var tmp = n
-        while (tmp != 0) {
-            a++
-            tmp /= 10
-        }
-        a
+    var a = 1
+    var tmp = n / 10
+    while (tmp != 0) {
+        a++
+        tmp /= 10
     }
+    return a
 }
 
 /**
@@ -90,17 +86,17 @@ fun digitNumber(n: Int): Int {
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
 fun fib(n: Int): Int {
-    val last_numbers = IntArray(2)
-    last_numbers[0] = 1
-    last_numbers[1] = 1
+    val lastNumbers = IntArray(2)
+    lastNumbers[0] = 1
+    lastNumbers[1] = 1
     var i = 0
     var cur = 2
     while (cur < n) {
         i++
-        last_numbers[i % 2] = last_numbers[0] + last_numbers[1]
+        lastNumbers[i % 2] = lastNumbers[0] + lastNumbers[1]
         cur++
     }
-    return last_numbers[i % 2]
+    return lastNumbers[i % 2]
 }
 
 /**
@@ -119,7 +115,7 @@ fun lcm(m: Int, n: Int): Int {
             b -= a
         }
     }
-    return m * n / a
+    return m / a * n
 }
 
 /**
@@ -128,9 +124,10 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    var div = 2
-    while (n % div > 0) div++
-    return div
+    for (i in 2..sqrt(n.toDouble()).toInt()) {
+        if (n % i == 0) return i
+    }
+    return n
 }
 
 /**
@@ -138,11 +135,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int {
-    var div = n - 1
-    while (n % div > 0) div--
-    return div
-}
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -151,19 +144,17 @@ fun maxDivisor(n: Int): Int {
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean {
-    var a = m
-    var b = n
-    while (a != b) {
-        if (a > b) {
-            a -= b
-        } else {
-            b -= a
-        }
-    }
-    return a == 1
-}
+fun isCoPrime(m: Int, n: Int): Boolean = minCommonFactor(m, n) == 1
 
+fun minCommonFactor(a: Int, b: Int): Int {
+    var m = a
+    var n = b
+    while (m != n) {
+        if (m > n) m -= n
+        else n -= m
+    }
+    return m
+}
 
 /**
  * Простая
@@ -200,7 +191,6 @@ fun collatzSteps(x: Int): Int {
             collatzSteps(x * 3 + 1)
         }
     }
-
 }
 
 /**
@@ -211,19 +201,13 @@ fun collatzSteps(x: Int): Int {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun sin(x: Double, eps: Double): Double {
-    var eq_x = x
-    while (eq_x !in 0.0..PI * 2.0) {
-        if (eq_x < 0) eq_x += PI * 2.0
-        else if (eq_x >= PI * 2.0) eq_x -= PI * 2.0
-    }
-    if (eq_x > PI / 2.0) {
-        eq_x = PI - eq_x
-    }
-    var sin: Double = eq_x
-    var a: Double = eq_x
+    val eqX = x % (2 * PI)
+    var sin: Double = eqX
+    var a: Double = eqX
     var n = 1.0
+
     while (abs(a) > eps) {
-        a *= (-1) * eq_x * eq_x / ((n + 1.0) * (n + 2.0))
+        a *= (-1) * eqX * eqX / ((n + 1.0) * (n + 2.0))
         n += 2
         sin += a
     }
@@ -238,19 +222,12 @@ fun sin(x: Double, eps: Double): Double {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double {
-    var eq_x = x
+    val eqX = x % (2 * PI)
     var cos = 1.0
     var a = 1.0
     var n = 0.0
-    while (eq_x !in 0.0..PI * 2.0) {
-        if (eq_x < 0) eq_x += PI * 2.0
-        else if (eq_x >= PI * 2.0) eq_x -= PI * 2.0
-    }
-    if (eq_x > PI) {
-        eq_x = 2 * PI - eq_x
-    }
     while (abs(a) > eps) {
-        a *= (-1.0) * eq_x * eq_x / ((n + 1.0) * (n + 2.0))
+        a *= (-1.0) * eqX * eqX / ((n + 1.0) * (n + 2.0))
         n += 2
         cos += a
     }
@@ -286,15 +263,15 @@ fun revert(n: Int): Int {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun isPalindrome(n: Int): Boolean {
-    val len_n = digitNumber(n)
-    var left_border: Long = 1
-    var right_border: Long = 10
-    for (i in 1..len_n) left_border *= 10
-    while (left_border > right_border) {
-        if ((n % left_border / (left_border / 10)) != (n % right_border / (right_border / 10)))
+    val lenN = digitNumber(n)
+    var leftBorder: Long = 1
+    var rightBorder: Long = 10
+    for (i in 1..lenN) leftBorder *= 10
+    while (leftBorder > rightBorder) {
+        if ((n % leftBorder / (leftBorder / 10)) != (n % rightBorder / (rightBorder / 10)))
             return false
-        left_border /= 10
-        right_border *= 10
+        leftBorder /= 10
+        rightBorder *= 10
     }
     return true
 }
@@ -309,9 +286,9 @@ fun isPalindrome(n: Int): Boolean {
  */
 fun hasDifferentDigits(n: Int): Boolean {
     var num = n / 10
-    val first_digit = n % 10
+    val firstDigit = n % 10
     while (num > 0) {
-        if (first_digit != num % 10) return true
+        if (firstDigit != num % 10) return true
         num /= 10
     }
     return false
@@ -354,20 +331,20 @@ fun fibSequenceDigit(n: Int): Int {
     // Я не использовал уже написанную функцию для поиска числа фибоначи для того,
     // чтобы не искать каждое число начиная с 1
     if (n in 1..2) return 1
-    val last_numbers = IntArray(2)
-    last_numbers[0] = 1
-    last_numbers[1] = 1
+    val lastNumbers = IntArray(2)
+    lastNumbers[0] = 1
+    lastNumbers[1] = 1
     var i = 0
-    var prev_len = 2
-    while (prev_len < n) {
+    var prevLen = 2
+    while (prevLen < n) {
         i++
-        last_numbers[i % 2] = last_numbers[0] + last_numbers[1]
-        prev_len += digitNumber(last_numbers[i % 2])
+        lastNumbers[i % 2] = lastNumbers[0] + lastNumbers[1]
+        prevLen += digitNumber(lastNumbers[i % 2])
     }
-    var cur_fib = last_numbers[i % 2]
-    val dif = prev_len - n
+    var curFib = lastNumbers[i % 2]
+    val dif = prevLen - n
     for (j in 1..dif) {
-        cur_fib /= 10
+        curFib /= 10
     }
-    return cur_fib % 10
+    return curFib % 10
 }

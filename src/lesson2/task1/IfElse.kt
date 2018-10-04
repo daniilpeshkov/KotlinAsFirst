@@ -5,6 +5,7 @@ import lesson1.task1.discriminant
 import lesson1.task1.sqr
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
@@ -64,19 +65,19 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String {
-    return if (age % 100 in 5..20) {
-        age.toString() + " лет"
-    } else {
-        age.toString() + when (age % 10) {
-            1 -> " год"
-            in 2..4 -> " года"
-            in 5..9 -> " лет"
-            0 -> " лет"
-            else -> ""
+fun ageDescription(age: Int): String = age.toString() + " " +
+        if (age % 100 in 5..20) {
+            "лет"
+        } else {
+            when (age % 10) {
+                1 -> "год"
+                in 2..4 -> "года"
+                in 5..9 -> "лет"
+                0 -> "лет"
+                else -> ""
+            }
         }
-    }
-}
+
 
 /**
  * Простая
@@ -146,12 +147,13 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
     return if (a + b > c && a + c > b && c + b > a) {
-        val cc = sqr(a) + sqr(b)
-        val aa = sqr(b) + sqr(c)
-        val bb = sqr(a) + sqr(c)
-        if (sqr(c) == cc || sqr(a) == aa || sqr(b) == bb) {
+        val max = maxOf(a, b, c)
+        val min = minOf(a, b, c)
+        val average = a + b + c - max - min
+
+        if (max * max == min * min + average * average) {
             1
-        } else if (sqr(c) > cc || sqr(a) > aa || sqr(b) > bb) {
+        } else if (max * max > min * min + average * average) {
             2
         } else 0
     } else {
@@ -168,19 +170,8 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    return if (c <= b && d >= a) {
-        if (c < a) {
-            if (d > b) {
-                b - a
-            } else {
-                d - a
-            }
-        } else {
-            if (d > b) {
-                b - c
-            } else {
-                d - c
-            }
-        }
-    } else -1
+    val len = min(b, d) - max(a, c)
+    return if (len >= 0) len
+    else -1
 }
+
