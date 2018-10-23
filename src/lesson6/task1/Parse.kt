@@ -3,6 +3,8 @@
 package lesson6.task1
 
 import lesson2.task2.daysInMonth
+import java.lang.NumberFormatException
+import javax.swing.JMenuBar
 
 /**
  * Пример
@@ -123,7 +125,15 @@ fun dateDigitToStr(digital: String): String = TODO()
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val number = phone.replace("(", "").replace(")", "")
+            .replace("-", "").replace(" ", "")
+    return if (number.all { it == '+' || it in '0'..'9' }) {
+        number
+    } else {
+        ""
+    }
+}
 
 /**
  * Средняя
@@ -135,7 +145,18 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val entries = jumps.split(" ")
+    var max = -1
+    for (i in entries) {
+        try {
+            val d = i.toInt()
+            if (d > max) max = d
+        } catch (ex: NumberFormatException) {
+        }
+    }
+    return max
+}
 
 /**
  * Сложная
@@ -158,18 +179,52 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val entries = expression.split(" ")
+    var i = 1
+    var sum = 0
+    var sign = 1
+    for (entry in entries) {
+        if (i % 2 == 1) {
+            if (entry.all { it in '0'..'9' }) {
+                val tmp: Int = entry.toInt()
+                sum += tmp * sign
+            } else throw IllegalArgumentException()
+        } else {
+            sign = when (entry) {
+                "+" -> 1
+                "-" -> -1
+                else -> {
+                    throw IllegalArgumentException()
+                }
+            }
+        }
+        i++
+    }
+    return sum
+}
 
 /**
  * Сложная
  *
  * Строка состоит из набора слов, отделённых друг от друга одним пробелом.
  * Определить, имеются ли в строке повторяющиеся слова, идущие друг за другом.
+ * Определить, имеются ли в строке повторяющиеся слова, идущие друг за другом.
  * Слова, отличающиеся только регистром, считать совпадающими.
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val entries = str.toLowerCase().split(" ")
+    var length = 0
+    for (i in 0..entries.size - 2) {
+        if (entries[i] == entries[i + 1]) {
+            return length
+        }
+        length += entries[i].length + 1
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -182,7 +237,23 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    var max = 0.0f
+    var maxName = ""
+    for (product in description.split("; ")) {
+        val tmpList = product.split(" ")
+        if (tmpList.size == 2 && tmpList[1].all { it == '.' || it in '0'..'9' }) {
+            val tmp = tmpList[1].toFloat()
+            if (tmp > max) {
+                max = tmp
+                maxName = tmpList[0]
+            }
+        } else {
+            return ""
+        }
+    }
+    return maxName
+}
 
 /**
  * Сложная
@@ -195,7 +266,20 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val values: Map<Char, Int> = mapOf('I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000)
+    var number = 0
+    var last = 0
+    for (i in 0 until roman.length) {
+        if (roman[i] !in values.keys) return -1
+        if (values[roman[i]]!!.toInt() > last) {
+            number -= last * 2
+        }
+        last = values[roman[i]]!!.toInt()
+        number += last
+    }
+    return number
+}
 
 /**
  * Очень сложная
@@ -233,4 +317,70 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    if (commandsIsCorrect(commands)) {
+        val field: Array<Int> = Array(cells) { 0 }
+        var completedCommandsCount = 0
+        var curPos = cells / 2
+        var curComI = 0
+        while (completedCommandsCount <= limit && curComI < commands.length) {
+            when (commands[curComI]) {
+                '+' -> field[curPos] += 1
+                '-' -> field[curPos] -= 1
+                '>' -> {
+                    curPos += 1
+                    if (curPos == cells) throw IllegalStateException()
+                }
+                '<' -> {
+                    curPos -= 1
+                    if (curPos < 0) throw IllegalStateException()
+                }
+                '[' -> {
+                    if (field[curPos] == 0) {
+                        var tmp = 1
+                        curComI += 1
+                        while (tmp != 0) {
+                            tmp += when (commands[curComI]) {
+                                '[' -> 1
+                                ']' -> -1
+                                else -> 0
+                            }
+                        }
+                    }
+                }
+                ']' -> {
+                    if (field[curPos] > 0) {
+                        var tmp = 1
+                        curComI -= 1
+                        while (tmp != 0) {
+                            tmp += when (commands[curComI]) {
+                                ']' -> 1
+                                '[' -> -1
+                                else -> 0
+                            }
+                        }
+                    }
+                }
+            }
+            curComI += 1
+            completedCommandsCount++
+        }
+        return field.toList()
+    } else {
+        throw IllegalArgumentException()
+    }
+}
+
+fun commandsIsCorrect(commands: String): Boolean {
+    val commandsVariants = arrayOf('<', '>', '+', '-', '[', ']', ' ')
+    var bracketK = 0
+    for (i in commands) {
+        bracketK += when (i) {
+            '[' -> 1
+            ']' -> -1
+            else -> 0
+        }
+        if (i !in commandsVariants || bracketK < 0) return false
+    }
+    return true
+}

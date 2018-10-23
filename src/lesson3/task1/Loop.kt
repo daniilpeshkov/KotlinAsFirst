@@ -33,7 +33,6 @@ fun isPrime(n: Int): Boolean {
     }
     return true
 }
-
 /**
  * Пример
  *

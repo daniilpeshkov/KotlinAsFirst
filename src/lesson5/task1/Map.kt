@@ -341,12 +341,10 @@ fun hasAnagrams(words: List<String>): Boolean {
 fun isAnagramm(a: String, b: String): Boolean {
     val letters: MutableMap<Char, Int> = mutableMapOf()
     for (i in a) {
-        if (letters[i] == null) letters[i] = 0
-        letters[i] = letters[i]!!.toInt() + 1
+        letters[i] = letters[i] ?: 0 + 1
     }
     for (i in b) {
-        if (letters[i] == null) letters[i] = 0
-        letters[i] = letters[i]!!.toInt() - 1
+        letters[i] = letters[i] ?: 1 - 1
     }
     var f = 0
     for (i in letters.values) {
@@ -379,13 +377,11 @@ fun isAnagramm(a: String, b: String): Boolean {
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in list.listIterator()) {
-        for (j in list.listIterator()) {
+    for (i in list.indices) {
+        for (j in list.indices) {
             if (i != j) {
-                if (i + j == number) {
-                    val i_index = list.indexOf(i)
-                    val j_index = list.indexOf(j)
-                    return Pair(min(i_index, j_index), max(i_index, j_index))
+                if (list[i] + list[j] == number) {
+                    return Pair(min(i, j), max(i, j))
                 }
             }
         }
@@ -412,5 +408,16 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *     450
  *   ) -> emptySet()
  */
-fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> = TODO()
+fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
+    var a: List<Pair<String, Pair<Int, Int>>> = treasures.toList()
+    var maxValue = 0
+
+    for (i in a.indices) {
+
+    }
+    TODO()
+}
+
+
+
 
