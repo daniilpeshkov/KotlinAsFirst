@@ -3,6 +3,7 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
+import lesson2.task1.ageDescription
 import lesson3.task1.isPrime
 import kotlin.math.sqrt
 
@@ -221,24 +222,20 @@ fun accumulate(list: MutableList<Double>): MutableList<Double> {
  * Множители в списке должны располагаться по возрастанию.
  */
 fun factorize(n: Int): List<Int> {
-    if (isPrime(n)) return mutableListOf(n)
-    val a: MutableList<Int> = mutableListOf()
-    a.replaceAll { it -> it * it }
-    var curN = n
-    while (curN % 2 == 0) {//Так 2 - единственное чётное простое число, наверное оптимльно будет
-        curN /= 2          // сначала проверить его, а потом идти только по нечётным числам.
-        a.add(2)
-    }
-    var div = 3
-    while (curN > 1) {
-        while (curN % div == 0) {
-            curN /= div
-            a.add(div)
+    return if (isPrime(n)) mutableListOf(n)
+    else {
+        val a: MutableList<Int> = mutableListOf()
+        var curN = n
+        var div = 2
+        while (curN > 1) {
+            while (curN % div == 0) {
+                curN /= div
+                a.add(div)
+            }
+            div += 1
         }
-        div += 2
-        while (!lesson3.task1.isPrime(div)) div += 2
+        a
     }
-    return a
 }
 
 /**
@@ -258,7 +255,6 @@ fun factorizeToString(n: Int): String = factorize(n).toMutableList().joinToStrin
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
-    if (n == 0) return mutableListOf(0)
     val digits: MutableList<Int> = mutableListOf()
     var curN = n
     while (curN != 0) {
@@ -278,15 +274,14 @@ fun convert(n: Int, base: Int): List<Int> {
  */
 fun convertToString(n: Int, base: Int): String {
     val digits = convert(n, base)
-    if (digits.size == 1) return digits[0].toString()
-    val digitsStr = mutableListOf<String>()
-    for (i in digits) {
-        digitsStr.add(when {
-            i > 9 -> ('a' + i - 10).toString()
-            else -> i.toString()
-        })
-    }
-    return digitsStr.joinToString("")
+    val iterator = digits.listIterator()
+    return List(digits.size) {
+        val i = iterator.next()
+        when {
+            i > 9 -> "${'a' + i - 10}"
+            else -> "$i"
+        }
+    }.joinToString("")
 }
 
 /**
@@ -319,14 +314,14 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val digitsInBase = mutableListOf<Int>()
-    for (i: Char in str) {
-        digitsInBase.add(when {
+    val iterator = str.iterator()
+    return decimal(List(str.length) {
+        val i = iterator.nextChar()
+        when {
             i > '9' -> 10 + (i - 'a')
             else -> i - '0'
-        })
-    }
-    return decimal(digitsInBase, base)
+        }
+    }, base)
 }
 
 /**
@@ -359,7 +354,7 @@ fun roman(n: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 
-fun translateNumber(n: Int, accusative: Boolean): List<String> {
+fun translateNumber(n: Int): List<String> {
     if (n == 0) return listOf()
     val a = mutableListOf<String>()
     a.add(when (n / 100) {
@@ -402,8 +397,8 @@ fun translateNumber(n: Int, accusative: Boolean): List<String> {
             else -> ""
         })
         a.add(when (n % 10) {
-            1 -> if (accusative) "одна" else "один"
-            2 -> if (accusative) "две" else "два"
+            1 -> "один"
+            2 -> "два"
             3 -> "три"
             4 -> "четыре"
             5 -> "пять"
@@ -420,16 +415,27 @@ fun translateNumber(n: Int, accusative: Boolean): List<String> {
 
 
 fun russian(n: Int): String {
-    val a = translateNumber(n / 1000, true).toMutableList()
+    val a = translateNumber(n / 1000).toMutableList()
     if (!a.isEmpty()) {
-        val tmp = a.last().substring(a.last().lastIndex - 1)
-        a.add(if (tmp == "на") "тысяча"
-        else if (tmp == "ве" || tmp == "ре" || tmp == "ри") "тысячи"
-        else "тысяч"
-                //это показалось самым оптимальным вариантом не пихать определение
-                //формы слова "тысяча" в функцию translateNumber()
-        )
+        a.add(if (n / 1000 % 100 in 5..20) {
+            "тысяч"
+        } else {
+            val lastDigit = n / 1000 % 10
+            when (lastDigit) {
+                1 -> {
+                    a[a.lastIndex] = "одна"
+                    "тысяча"
+                }
+                in 2..4 -> {
+                    if (lastDigit == 2) {
+                        a[a.lastIndex] = "две"
+                    }
+                    "тысячи"
+                }
+                else -> "тысяч"
+            }
+        })
     }
-    a += translateNumber(n % 1000, false)
+    a += translateNumber(n % 1000)
     return a.joinToString(" ")
 }
