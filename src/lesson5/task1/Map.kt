@@ -2,6 +2,7 @@
 
 package lesson5.task1
 
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -124,16 +125,18 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val studentsToGrade: MutableMap<Int, MutableList<String>> = mutableMapOf()
-    for (i in 2..5) {
+    val studentsToGrade: MutableMap<Int, MutableSet<String>> = mutableMapOf()
+    for (i in grades.values) {
         for (name in grades.keys) {
             if (grades[name] == i) {
-                if (studentsToGrade[i] == null) studentsToGrade[i] = mutableListOf()
+                if (studentsToGrade[i] == null) studentsToGrade[i] = mutableSetOf()
                 studentsToGrade[i]!!.add(name)
             }
         }
     }
-    return studentsToGrade.toMap()
+    val a: MutableMap<Int, List<String>> = mutableMapOf()
+    studentsToGrade.forEach { t, u -> a[t] = u.toList() }
+    return a
 }
 
 /**
@@ -171,14 +174,14 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val k: MutableMap<String, Int> = mutableMapOf()
     val averagePrice: MutableMap<String, Double> = mutableMapOf()
-    for ((first, second) in stockPrices) {
-        if (k[first] == null) k[first] = 0
-        k[first] = k[first]!!.toInt() + 1
-        if (averagePrice[first] == null) averagePrice[first] = 0.0
-        averagePrice[first] = averagePrice[first]!!.toInt() + second
+    for ((name, worth) in stockPrices) {
+        if (k[name] == null) k[name] = 0
+        k[name] = k[name]!! + 1
+        if (averagePrice[name] == null) averagePrice[name] = 0.0
+        averagePrice[name] = averagePrice[name]!! + worth
     }
     for (i in averagePrice.keys) {
-        averagePrice[i] = averagePrice[i]!!.toDouble() / k[i]!!.toDouble()
+        averagePrice[i] = averagePrice[i]!! / k[i]!!.toDouble()
     }
     return averagePrice.toMap()
 }
@@ -201,10 +204,10 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
     var min = 0.0
     var name: String? = null
-    for (curName in stuff.keys) {
-        if (stuff[curName]!!.first == kind) {
-            if (min == 0.0 || stuff[curName]!!.second < min) {
-                min = stuff[curName]!!.second
+    for ((curName, typeAndPrice) in stuff) {
+        if (typeAndPrice.first == kind) {
+            if (min == 0.0 || typeAndPrice.second < min) {
+                min = typeAndPrice.second
                 name = curName
             }
         }
@@ -236,7 +239,39 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val dating = mutableMapOf<String, Set<String>>()
+    val allPersons = mutableSetOf<String>()
+    for ((name, currentFriends) in friends) {
+        allPersons += currentFriends
+        allPersons += name
+    }
+    for (currentName in allPersons) {
+        val currentPersonDating = mutableSetOf<String>()
+        val handshakesWay = Stack<String>()
+        handshakesWay.push(currentName)
+        val passedPersons = mutableMapOf<String, Boolean>()
+        while (handshakesWay.isNotEmpty()) {
+            passedPersons[handshakesWay.peek()] = true
+            var foundNext = false
+            if (friends[handshakesWay.peek()] != null) {
+                for (next in friends[handshakesWay.peek()]!!) {
+                    if (!(passedPersons[next] ?: false)) {
+                        foundNext = true
+                        currentPersonDating.add(next)
+                        handshakesWay.push(next)
+                        break
+                    }
+                }
+            }
+            if (!foundNext) {
+                handshakesWay.pop()
+            }
+        }
+        dating[currentName] = currentPersonDating.toSet()
+    }
+    return dating
+}
 
 /**
  * Простая
@@ -266,7 +301,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val inBoth: MutableList<String> = mutableListOf()
+    val inBoth = mutableSetOf<String>()
     for (entry in a) {
         if (b.contains(entry)) inBoth.add(entry)
     }
@@ -324,10 +359,10 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    for (i in words.listIterator()) {
-        for (j in words.listIterator()) {
+    for (i in words.indices) {
+        for (j in words.indices) {
             if (i != j) {
-                if (isAnagramm(i, j)) return true
+                if (isAnagramm(words[i], words[j])) return true
             }
         }
     }
@@ -341,15 +376,15 @@ fun isAnagramm(a: String, b: String): Boolean {
         letters[i] = letters[i] ?: 0 + 1
     }
     for (i in b) {
-        letters[i] = letters[i] ?: 1 - 1
+        letters[i] = letters[i] ?: 0 - 1
     }
-    var f = 0
+    var sign = 0
     for (i in letters.values) {
         if (i != 0) {
-            if (f == 0) {
-                f = i / abs(i)
+            if (sign == 0) {
+                sign = i / abs(i)
             } else {
-                if (f != i / abs(i)) return false
+                if (sign != i / abs(i)) return false
             }
         }
     }
@@ -406,13 +441,58 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
  *   ) -> emptySet()
  */
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
-    var a: List<Pair<String, Pair<Int, Int>>> = treasures.toList()
-    var maxValue = 0
+    val massToSet = mutableMapOf<Int, Set<String>>()
+    val massToPrice = mutableMapOf<Int, Int>()
+    val itemUsed = mutableMapOf<String, Boolean>()
+    var deltaM = Int.MAX_VALUE
+    var nameOfMin: String = ""
 
-    for (i in a.indices) {
-
+    for ((name, massPrice) in treasures) {
+        if (massPrice.first < deltaM) {
+            deltaM = massPrice.first
+            nameOfMin = name
+        }
     }
-    TODO()
+    massToPrice[0] = 0
+    massToSet[0] = setOf()
+
+    var currentMass = deltaM
+    if (currentMass <= capacity) {
+        massToPrice[currentMass] = treasures[nameOfMin]!!.second
+        massToSet[currentMass] = setOf(nameOfMin)
+        itemUsed[nameOfMin] = true
+        currentMass += deltaM
+    }
+
+    while (currentMass < capacity) {
+        var maxSuitableMass = 0
+        var maxPrice = 0
+        var maxName = ""
+        for ((name, massPrice) in treasures) {
+            if (!(itemUsed[name] ?: false)) {
+                if (massPrice.first < currentMass) {
+                    if (massPrice.second > massToPrice[currentMass]!!) {
+                        maxSuitableMass = massPrice.first
+                        maxPrice = massPrice.second
+                        maxName = name
+                    }
+                }
+            }
+        }
+
+        if (maxPrice == 0) {
+            massToPrice[currentMass + deltaM] = massToPrice[currentMass]!!
+            massToSet[currentMass + deltaM] = massToSet[currentMass + deltaM]!!
+        } else {
+            itemUsed[maxName] = true
+            val massSurplus = ((currentMass - maxSuitableMass) / deltaM) * deltaM
+            massToPrice[currentMass + deltaM] = massToPrice[currentMass]!! + maxPrice
+            massToSet[currentMass + deltaM] = massToSet[massSurplus]!! + maxName
+        }
+        currentMass += deltaM
+    }
+
+    return massToSet[currentMass - deltaM]!!
 }
 
 

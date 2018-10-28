@@ -172,6 +172,7 @@ class Tests {
                 mapOf("MSFT" to 150.0, "NFLX" to 40.0),
                 averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0))
         )
+
         assertEquals(
                 mapOf("MSFT" to 150.0, "NFLX" to 45.0),
                 averageStockPrice(listOf("MSFT" to 100.0, "MSFT" to 200.0, "NFLX" to 40.0, "NFLX" to 50.0))
@@ -194,6 +195,15 @@ class Tests {
                         "печенье"
                 )
         )
+        assertEquals(
+                "кодзима",
+                findCheapestStuff(
+                        mapOf("Мария" to ("печенье" to 20.0), "Орео" to ("печенье" to 100.0),
+                                "кодзима" to ("печенье" to 19.0)),
+                        "печенье"
+                )
+        )
+
     }
 
     @Test
@@ -560,6 +570,5 @@ class Tests {
                 )
         )
     }
-
     // TODO: map task tests
 }
