@@ -569,6 +569,13 @@ class Tests {
                         450
                 )
         )
+        assertEquals(setOf("0"),
+                bagPacking(
+                        mapOf("0" to (430 to 289)),
+                        3649
+                )
+        )
+
     }
     // TODO: map task tests
 }

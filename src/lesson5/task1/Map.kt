@@ -481,17 +481,16 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         }
 
         if (maxPrice == 0) {
-            massToPrice[currentMass + deltaM] = massToPrice[currentMass]!!
-            massToSet[currentMass + deltaM] = massToSet[currentMass + deltaM]!!
+            massToPrice[currentMass] = massToPrice[currentMass - deltaM]!!
+            massToSet[currentMass] = massToSet[currentMass - deltaM]!!
         } else {
             itemUsed[maxName] = true
             val massSurplus = ((currentMass - maxSuitableMass) / deltaM) * deltaM
-            massToPrice[currentMass + deltaM] = massToPrice[currentMass]!! + maxPrice
-            massToSet[currentMass + deltaM] = massToSet[massSurplus]!! + maxName
+            massToPrice[currentMass] = massToPrice[currentMass - deltaM]!! + maxPrice
+            massToSet[currentMass] = massToSet[massSurplus - deltaM]!! + maxName
         }
         currentMass += deltaM
     }
-
     return massToSet[currentMass - deltaM]!!
 }
 
