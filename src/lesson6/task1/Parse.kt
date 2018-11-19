@@ -5,6 +5,7 @@ package lesson6.task1
 import lesson2.task2.daysInMonth
 import java.lang.NumberFormatException
 import javax.swing.JMenuBar
+import kotlin.math.max
 
 /**
  * Пример
@@ -74,32 +75,21 @@ fun main(args: Array<String>) {
  * входными данными.
  */
 fun dateStrToDigit(str: String): String {
-    val parts = str.split(" ")
-    if (parts.size == 3) {
-        val days_in_month = daysInMonth(monthToNumber(parts[1]), parts[2].toInt())
-        return if (parts[0].toInt() > days_in_month && monthToNumber(parts[1]) != 0) ""
-        else {
-            parts[0] + "." + twoDigitStr(monthToNumber(parts[1])) + "." + parts[2]
-        }
+    val monthToNumber = mapOf(
+            "января" to 1, "февраля" to 2, "марта" to 3,
+            "апреля" to 4, "мая" to 5, "июня" to 6,
+            "июля" to 7, "августа" to 8, "сентября" to 9,
+            "октября" to 10, "ноября" to 11, "декабря" to 12)
+    val data = str.split(" ")
+    val numberRegex = Regex("\\d+")
+    if (data.size == 3 && numberRegex.matches(data[0]) && numberRegex.matches(data[2])
+            && data[1] in monthToNumber.keys
+            && data[0].toInt() <= daysInMonth(monthToNumber[data[1]]!!, data[2].toInt())) {
+        return "${twoDigitStr(data[0].toInt())}.${twoDigitStr(monthToNumber[data[1]]!!)}.${data[2]}"
     }
-    return "" //TODO
+    return ""
 }
 
-fun monthToNumber(name: String): Int = when (name) {
-    "января" -> 1
-    "февраля" -> 2
-    "марта" -> 3
-    "апреля" -> 4
-    "мая" -> 5
-    "июня" -> 6
-    "июля" -> 7
-    "августа" -> 8
-    "сентября" -> 9
-    "октября" -> 10
-    "ноября" -> 11
-    "декабря" -> 12
-    else -> 0
-}
 
 /**
  * Средняя
@@ -111,7 +101,31 @@ fun monthToNumber(name: String): Int = when (name) {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val numbers = digital.replace(Regex("(?:\\s+)|(?:(?<!\\d)[0]+)"), "")
+            .split(".")
+    val numberRegex = Regex("\\d+")
+    if (numbers.size == 3 && numbers.all { numberRegex.matches(it) }) {
+        if (numbers[0].toInt() <= daysInMonth(numbers[1].toInt(), numbers[2].toInt()) && numbers[1].toInt() in 1..12) {
+            return "${numbers[0]} ${when (numbers[1]) {
+                "1" -> "января"
+                "2" -> "февраля"
+                "3" -> "марта"
+                "4" -> "апреля"
+                "5" -> "мая"
+                "6" -> "июня"
+                "7" -> "июля"
+                "8" -> "августа"
+                "9" -> "сентября"
+                "10" -> "октября"
+                "11" -> "ноября"
+                "12" -> "декабря"
+                else -> ""
+            }} ${numbers[2]}"
+        }
+    }
+    return ""
+}
 
 /**
  * Средняя
@@ -126,9 +140,8 @@ fun dateDigitToStr(digital: String): String = TODO()
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val number = phone.replace("(", "").replace(")", "")
-            .replace("-", "").replace(" ", "")
-    return if (number.all { it == '+' || it in '0'..'9' }) {
+    val number = phone.replace(Regex("[()\\-\\s]+"), "")
+    return if (Regex("[+]?[0-9]+").matches(number)) {
         number
     } else {
         ""
@@ -168,7 +181,24 @@ fun bestLongJump(jumps: String): Int {
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    if (Regex("(?:\\s?\\d+\\s+[%\\-+]+)+").matches(jumps)) {
+        val entries = jumps.split(" ")
+        var maxHeight = 0
+        var currentHeight = 0
+        for ((k, entry) in entries.withIndex()) {
+            if (k % 2 == 0) {
+                currentHeight = entry.toInt()
+            } else {
+                if (entry.contains('+')) {
+                    maxHeight = max(currentHeight, maxHeight)
+                }
+            }
+        }
+        return maxHeight
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -180,28 +210,21 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    val entries = expression.split(" ")
-    var i = 1
-    var sum = 0
-    var sign = 1
-    for (entry in entries) {
-        if (i % 2 == 1) {
-            if (entry.all { it in '0'..'9' }) {
-                val tmp: Int = entry.toInt()
-                sum += tmp * sign
-            } else throw IllegalArgumentException()
-        } else {
-            sign = when (entry) {
-                "+" -> 1
-                "-" -> -1
-                else -> {
-                    throw IllegalArgumentException()
-                }
+    if (Regex("(\\d+\\s+[+-]\\s+)*(\\d+)\$").matches(expression)) {
+        val entries = expression.split(Regex("\\s+"))
+        var sum = 0
+        var sign = 1
+        for ((i, entry) in entries.withIndex()) {
+            if (i % 2 == 0) {
+                sum += entry.toInt() * sign
+            } else {
+                sign = if (entry == "+") 1
+                else -1 // if "-"
             }
         }
-        i++
+        return sum
     }
-    return sum
+    throw IllegalArgumentException()
 }
 
 /**
@@ -238,21 +261,21 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    var max = 0.0f
-    var maxName = ""
-    for (product in description.split("; ")) {
-        val tmpList = product.split(" ")
-        if (tmpList.size == 2 && tmpList[1].all { it == '.' || it in '0'..'9' }) {
+    if (Regex("([а-яА-Яa-zA-Z]+\\s\\d+(\\.\\d+)?;\\s)*[а-яА-Яa-zA-Z]+\\s\\d+(\\.\\d+)?\$")
+                    .matches(description)) {
+        var max = 0.0f
+        var maxName = ""
+        for (product in description.split("; ")) {
+            val tmpList = product.split(" ")
             val tmp = tmpList[1].toFloat()
             if (tmp > max) {
                 max = tmp
                 maxName = tmpList[0]
             }
-        } else {
-            return ""
         }
+        return maxName
     }
-    return maxName
+    return ""
 }
 
 /**
@@ -272,10 +295,10 @@ fun fromRoman(roman: String): Int {
     var last = 0
     for (i in 0 until roman.length) {
         if (roman[i] !in values.keys) return -1
-        if (values[roman[i]]!!.toInt() > last) {
+        if (values[roman[i]]!! > last) {
             number -= last * 2
         }
-        last = values[roman[i]]!!.toInt()
+        last = values[roman[i]]!!
         number += last
     }
     return number
@@ -323,7 +346,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         var completedCommandsCount = 0
         var curPos = cells / 2
         var curComI = 0
-        while (completedCommandsCount <= limit && curComI < commands.length) {
+        while (completedCommandsCount < limit && curComI < commands.length) {
             when (commands[curComI]) {
                 '+' -> field[curPos] += 1
                 '-' -> field[curPos] -= 1
@@ -338,8 +361,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 '[' -> {
                     if (field[curPos] == 0) {
                         var tmp = 1
-                        curComI += 1
                         while (tmp != 0) {
+                            curComI += 1
                             tmp += when (commands[curComI]) {
                                 '[' -> 1
                                 ']' -> -1
@@ -349,10 +372,10 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                     }
                 }
                 ']' -> {
-                    if (field[curPos] > 0) {
+                    if (field[curPos] != 0) {
                         var tmp = 1
-                        curComI -= 1
                         while (tmp != 0) {
+                            curComI -= 1
                             tmp += when (commands[curComI]) {
                                 ']' -> 1
                                 '[' -> -1
@@ -372,15 +395,17 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
 }
 
 fun commandsIsCorrect(commands: String): Boolean {
-    val commandsVariants = arrayOf('<', '>', '+', '-', '[', ']', ' ')
-    var bracketK = 0
-    for (i in commands) {
-        bracketK += when (i) {
-            '[' -> 1
-            ']' -> -1
-            else -> 0
+    if (Regex("[<>+\\-\\[\\]\\s]+").matches(commands)) {
+        var bracketK = 0
+        for (i in commands) {
+            bracketK += when (i) {
+                '[' -> 1
+                ']' -> -1
+                else -> 0
+            }
+            if (bracketK < 0) return false
         }
-        if (i !in commandsVariants || bracketK < 0) return false
+        if (bracketK == 0) return true
     }
-    return true
+    return false
 }

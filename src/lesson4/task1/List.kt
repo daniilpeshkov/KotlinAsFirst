@@ -257,6 +257,7 @@ fun factorizeToString(n: Int): String = factorize(n).toMutableList().joinToStrin
 fun convert(n: Int, base: Int): List<Int> {
     val digits: MutableList<Int> = mutableListOf()
     var curN = n
+    if (n == 0) digits.add(n)
     while (curN != 0) {
         digits.add(curN % base)
         curN /= base
@@ -387,7 +388,7 @@ fun translateNumber(n: Int): List<String> {
     } else {
         a.add(when (n % 100 / 10) {
             2 -> "двадцать"
-            3 -> "три"
+            3 -> "тридцать"
             4 -> "сорок"
             5 -> "пятьдесят"
             6 -> "шестьдесят"

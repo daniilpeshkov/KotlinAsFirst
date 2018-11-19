@@ -202,11 +202,11 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var min = 0.0
+    var min = Double.MAX_VALUE
     var name: String? = null
     for ((curName, typeAndPrice) in stuff) {
         if (typeAndPrice.first == kind) {
-            if (min == 0.0 || typeAndPrice.second < min) {
+            if (min == 0.0 || typeAndPrice.second <= min) {
                 min = typeAndPrice.second
                 name = curName
             }
@@ -376,16 +376,9 @@ fun isAnagramm(a: String, b: String): Boolean {
         letters[i] = letters[i] ?: 0 + 1
     }
     for (i in b) {
-        letters[i] = letters[i] ?: 0 - 1
-    }
-    var sign = 0
-    for (i in letters.values) {
-        if (i != 0) {
-            if (sign == 0) {
-                sign = i / abs(i)
-            } else {
-                if (sign != i / abs(i)) return false
-            }
+        letters[i] = when {
+            letters[i] ?: 0 <= 0 -> return false
+            else -> (letters[i] ?: 0) - 1
         }
     }
     return true
