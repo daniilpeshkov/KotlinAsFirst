@@ -463,8 +463,8 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         var maxName = ""
         for ((name, massPrice) in treasures) {
             if (!(itemUsed[name] ?: false)) {
-                if (massPrice.first < currentMass) {
-                    if (massPrice.second > massToPrice[currentMass]!!) {
+                if (massPrice.first <= currentMass) {
+                    if (massPrice.second > maxPrice) {
                         maxSuitableMass = massPrice.first
                         maxPrice = massPrice.second
                         maxName = name
@@ -479,8 +479,11 @@ fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<Strin
         } else {
             itemUsed[maxName] = true
             val massSurplus = ((currentMass - maxSuitableMass) / deltaM) * deltaM
-            massToPrice[currentMass] = massToPrice[currentMass - deltaM]!! + maxPrice
-            massToSet[currentMass] = massToSet[massSurplus - deltaM]!! + maxName
+            massToPrice[currentMass] = massToPrice[massSurplus]!! + maxPrice
+            massToSet[currentMass] = massToSet[massSurplus]!! + maxName
+        }
+        for (i in itemUsed.keys) {
+            itemUsed[i] = i in massToSet[currentMass]!!
         }
         currentMass += deltaM
     }

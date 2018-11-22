@@ -4,8 +4,6 @@ package lesson6.task1
 
 import lesson2.task2.daysInMonth
 import java.lang.NumberFormatException
-import javax.swing.JMenuBar
-import kotlin.math.max
 
 /**
  * Пример
@@ -102,21 +100,20 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    val numbers = digital.replace(Regex("(?:\\s+)|(?:(?<!\\d)[0]+)"), "")
-            .split(".")
+    val numbers = digital.split(".")
     val numberRegex = Regex("\\d+")
     if (numbers.size == 3 && numbers.all { numberRegex.matches(it) }) {
         if (numbers[0].toInt() <= daysInMonth(numbers[1].toInt(), numbers[2].toInt()) && numbers[1].toInt() in 1..12) {
-            return "${numbers[0]} ${when (numbers[1]) {
-                "1" -> "января"
-                "2" -> "февраля"
-                "3" -> "марта"
-                "4" -> "апреля"
-                "5" -> "мая"
-                "6" -> "июня"
-                "7" -> "июля"
-                "8" -> "августа"
-                "9" -> "сентября"
+            return "${numbers[0].replace("0", "")} ${when (numbers[1]) {
+                "01" -> "января"
+                "02" -> "февраля"
+                "03" -> "марта"
+                "04" -> "апреля"
+                "05" -> "мая"
+                "06" -> "июня"
+                "07" -> "июля"
+                "08" -> "августа"
+                "09" -> "сентября"
                 "10" -> "октября"
                 "11" -> "ноября"
                 "12" -> "декабря"
@@ -182,22 +179,23 @@ fun bestLongJump(jumps: String): Int {
  * При нарушении формата входной строки вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    if (Regex("(?:\\s?\\d+\\s+[%\\-+]+)+").matches(jumps)) {
-        val entries = jumps.split(" ")
-        var maxHeight = 0
-        var currentHeight = 0
-        for ((k, entry) in entries.withIndex()) {
-            if (k % 2 == 0) {
-                currentHeight = entry.toInt()
-            } else {
-                if (entry.contains('+')) {
-                    maxHeight = max(currentHeight, maxHeight)
+    val correctResultSegmentRegex = Regex("(?:\\d+\\s[%\\-+]+\\s?)")
+    var maxHeight = 0
+    var currentStartIndex = 0
+
+    while (currentStartIndex < jumps.length) {
+        val result = correctResultSegmentRegex.find(jumps, currentStartIndex)
+        if (result != null && result.range.start == currentStartIndex) {
+            currentStartIndex = result.range.endInclusive + 1
+            if (result.value.contains("+")) {
+                val tmp = Regex("\\d+").find(result.value)?.value?.toInt()
+                if (tmp ?: 0 > maxHeight) {
+                    maxHeight = tmp!!
                 }
             }
-        }
-        return maxHeight
+        } else return -1
     }
-    return -1
+    return maxHeight
 }
 
 /**
@@ -261,7 +259,7 @@ fun firstDuplicateIndex(str: String): Int {
  * Все цены должны быть больше либо равны нуля.
  */
 fun mostExpensive(description: String): String {
-    if (Regex("([а-яА-Яa-zA-Z]+\\s\\d+(\\.\\d+)?;\\s)*[а-яА-Яa-zA-Z]+\\s\\d+(\\.\\d+)?\$")
+    if (Regex("(?:[^;]+\\s\\d+(?:.\\d+)?;\\s)*(?:[^;]+\\s\\d+(?:.\\d+)?)")
                     .matches(description)) {
         var max = 0.0f
         var maxName = ""
@@ -290,18 +288,21 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
-    val values: Map<Char, Int> = mapOf('I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000)
-    var number = 0
-    var last = 0
-    for (i in 0 until roman.length) {
-        if (roman[i] !in values.keys) return -1
-        if (values[roman[i]]!! > last) {
-            number -= last * 2
+    if (Regex("[IVXLCDM]+").matches(roman)) {
+        val values: Map<Char, Int> = mapOf('I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000)
+        var number = 0
+        var last = 0
+        for (i in 0 until roman.length) {
+            if (roman[i] !in values.keys) return -1
+            if (values[roman[i]]!! > last) {
+                number -= last * 2
+            }
+            last = values[roman[i]]!!
+            number += last
         }
-        last = values[roman[i]]!!
-        number += last
+        return number
     }
-    return number
+    return -1
 }
 
 /**
@@ -341,8 +342,8 @@ fun fromRoman(roman: String): Int {
  *
  */
 fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val field: Array<Int> = Array(cells) { 0 }
     if (commandsIsCorrect(commands)) {
-        val field: Array<Int> = Array(cells) { 0 }
         var completedCommandsCount = 0
         var curPos = cells / 2
         var curComI = 0
@@ -395,7 +396,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
 }
 
 fun commandsIsCorrect(commands: String): Boolean {
-    if (Regex("[<>+\\-\\[\\]\\s]+").matches(commands)) {
+    if (Regex("[<>+\\-\\[\\]\\s]*").matches(commands)) {
         var bracketK = 0
         for (i in commands) {
             bracketK += when (i) {

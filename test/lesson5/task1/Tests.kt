@@ -555,7 +555,7 @@ class Tests {
     @Test
     @Tag("Impossible")
     fun bagPacking() {
-        assertEquals(
+        /*assertEquals(
                 setOf("Кубок"),
                 bagPacking(
                         mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),
@@ -574,8 +574,17 @@ class Tests {
                         mapOf("0" to (430 to 289)),
                         3649
                 )
-        )
+        )*/
+        assertEquals(setOf("6", "5", "4", "3", "2", "1", "0"),
+                bagPacking(mapOf("0" to (68 to 149),
+                        "1" to (149 to 475),
+                        "2" to (178 to 99),
+                        "3" to (88 to 1),
+                        "4" to (1 to 179),
+                        "5" to (451 to 409),
+                        "6" to (149 to 148)), 2505))
+
 
     }
-    // TODO: map task tests
+// TODO: map task tests
 }
