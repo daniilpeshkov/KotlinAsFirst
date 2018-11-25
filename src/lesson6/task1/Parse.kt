@@ -4,6 +4,7 @@ package lesson6.task1
 
 import lesson2.task2.daysInMonth
 import java.lang.NumberFormatException
+import java.util.*
 
 /**
  * Пример
@@ -349,6 +350,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         var completedCommandsCount = 0
         var curPos = cells / 2
         var curComI = 0
+        val openBracketIndex = Stack<Int>()
         while (completedCommandsCount < limit && curComI < commands.length) {
             when (commands[curComI]) {
                 '+' -> field[curPos] += 1
@@ -372,23 +374,17 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                                 else -> 0
                             }
                         }
-                    }
+                    } else openBracketIndex.push(curComI)
                 }
                 ']' -> {
                     if (field[curPos] != 0) {
-                        var tmp = 1
-                        while (tmp != 0) {
-                            curComI -= 1
-                            tmp += when (commands[curComI]) {
-                                ']' -> 1
-                                '[' -> -1
-                                else -> 0
-                            }
-                        }
+                        curComI = openBracketIndex.peek()
+                    } else {
+                        openBracketIndex.pop()
                     }
                 }
             }
-            curComI += 1
+            curComI++
             completedCommandsCount++
         }
         return field.toList()
