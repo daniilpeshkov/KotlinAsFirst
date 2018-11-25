@@ -3,7 +3,6 @@
 package lesson5.task1
 
 import java.util.*
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -206,7 +205,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
     var name: String? = null
     for ((curName, typeAndPrice) in stuff) {
         if (typeAndPrice.first == kind) {
-            if (min == 0.0 || typeAndPrice.second <= min) {
+            if (typeAndPrice.second <= min) {
                 min = typeAndPrice.second
                 name = curName
             }
@@ -359,21 +358,18 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    for (i in words.indices) {
-        for (j in words.indices) {
-            if (i != j) {
-                if (isAnagramm(words[i], words[j])) return true
-            }
+    for (i in 0 until words.lastIndex) {
+        for (j in i + 1..words.lastIndex) {
+            if (isAnagram(words[i], words[j])) return true
         }
     }
-
     return false
 }
 
-fun isAnagramm(a: String, b: String): Boolean {
+fun isAnagram(a: String, b: String): Boolean {
     val letters: MutableMap<Char, Int> = mutableMapOf()
     for (i in a) {
-        letters[i] = letters[i] ?: 0 + 1
+        letters[i] = (letters[i] ?: 0) + 1
     }
     for (i in b) {
         letters[i] = when {

@@ -46,6 +46,7 @@ class Tests {
     @Test
     @Tag("Normal")
     fun dateDigitToStr() {
+        assertEquals("20 сентября 1", dateDigitToStr("20.09.1"))
         assertEquals("29 февраля 0", dateDigitToStr("29.02.0"))
         assertEquals("15 июля 2006", dateDigitToStr("15.07.2006"))
         assertEquals("", dateDigitToStr("01.02.20.19"))
@@ -113,6 +114,7 @@ class Tests {
     @Test
     @Tag("Hard")
     fun mostExpensive() {
+        assertEquals("", mostExpensive("5%O]HZ^/Xee\$oE7~99cW0.<>GlsmV>K%:#}/PBUq&C%t:'^%r\\l{~[^sFxq_%OW%l9{+%`Z?6Vc]!%%fv}?t/P+]=a%9%)e)\$WD_76m*t?(vTUmXbNyAPokMJq+`fbH]A_%e'vu7.Ck%hVE 0"))
         assertEquals("", mostExpensive(""))
         assertEquals("Курица", mostExpensive("Хлеб 39.9; Молоко 62.5; Курица 184.0; Конфеты 89.9"))
         assertEquals("Вино", mostExpensive("Вино 255.0"))

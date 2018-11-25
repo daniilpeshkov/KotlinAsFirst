@@ -104,7 +104,7 @@ fun dateDigitToStr(digital: String): String {
     val numberRegex = Regex("\\d+")
     if (numbers.size == 3 && numbers.all { numberRegex.matches(it) }) {
         if (numbers[0].toInt() <= daysInMonth(numbers[1].toInt(), numbers[2].toInt()) && numbers[1].toInt() in 1..12) {
-            return "${numbers[0].replace("0", "")} ${when (numbers[1]) {
+            return "${numbers[0].replace(Regex("0(?=\\d)"), "")} ${when (numbers[1]) {
                 "01" -> "января"
                 "02" -> "февраля"
                 "03" -> "марта"
@@ -182,20 +182,22 @@ fun bestHighJump(jumps: String): Int {
     val correctResultSegmentRegex = Regex("(?:\\d+\\s[%\\-+]+\\s?)")
     var maxHeight = 0
     var currentStartIndex = 0
-
-    while (currentStartIndex < jumps.length) {
-        val result = correctResultSegmentRegex.find(jumps, currentStartIndex)
-        if (result != null && result.range.start == currentStartIndex) {
-            currentStartIndex = result.range.endInclusive + 1
-            if (result.value.contains("+")) {
-                val tmp = Regex("\\d+").find(result.value)?.value?.toInt()
-                if (tmp ?: 0 > maxHeight) {
-                    maxHeight = tmp!!
+    if (jumps.isNotEmpty()) {
+        while (currentStartIndex < jumps.length) {
+            val result = correctResultSegmentRegex.find(jumps, currentStartIndex)
+            if (result != null && result.range.start == currentStartIndex) {
+                currentStartIndex = result.range.endInclusive + 1
+                if (result.value.contains("+")) {
+                    val tmp = Regex("\\d+").find(result.value)?.value?.toInt()
+                    if (tmp ?: 0 > maxHeight) {
+                        maxHeight = tmp!!
+                    }
                 }
-            }
-        } else return -1
+            } else return -1
+        }
+        return maxHeight
     }
-    return maxHeight
+    return -1
 }
 
 /**
@@ -266,7 +268,7 @@ fun mostExpensive(description: String): String {
         for (product in description.split("; ")) {
             val tmpList = product.split(" ")
             val tmp = tmpList[1].toFloat()
-            if (tmp > max) {
+            if (tmp >= max) {
                 max = tmp
                 maxName = tmpList[0]
             }
