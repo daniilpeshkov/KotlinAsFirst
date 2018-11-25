@@ -55,11 +55,12 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  */
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val bufferedReader = File(inputName).bufferedReader()
+    val substringsSet = substrings.toSet()
     val substringsCount = mutableMapOf<String, Int>()
     bufferedReader.use { reader ->
         var input = reader.readLine()
         while (input != null) {
-            substrings.forEach { substring ->
+            substringsSet.forEach { substring ->
                 var count = 0
                 var currentStartIndex = 0
                 while (currentStartIndex < input.length) {

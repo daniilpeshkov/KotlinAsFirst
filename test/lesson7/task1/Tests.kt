@@ -57,15 +57,14 @@ Basic, Ruby, Swift.
 
     @Test
     fun test() {
-        assertTrue(Regex("qwe").findAll("qweqwe").count() == 2)
-        println(('a' + 10) + " " + ('A' + ('в' - 'а') - 1))
-        assertNotEquals(-1, "a".indexOf("a", 0, true))
-        println("frferf".toCharArray().joinToString(""))
+        val a = listOf("a", "a", "b").groupingBy {it}.eachCount()
+        val af = 5 + 5
     }
 
     @Test
     @Tag("Normal")
     fun countSubstrings() {
+        assertEquals(mapOf("аб" to 21), countSubstrings("input/test2.txt", listOf("аб")))
         assertEquals(mapOf("РАЗНЫЕ" to 2, "ные" to 2, "Неряшливость" to 1, "е" to 49, "эволюция" to 0),
                 countSubstrings("input/substrings_in1.txt", listOf("РАЗНЫЕ", "ные", "Неряшливость", "е", "эволюция")))
         assertEquals(mapOf("Карминовый" to 2, "Некрасивый" to 2, "белоглазый" to 1),
