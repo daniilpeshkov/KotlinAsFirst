@@ -1,7 +1,6 @@
 package lesson7.task1
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -60,6 +59,8 @@ Basic, Ruby, Swift.
     fun test() {
         assertTrue(Regex("qwe").findAll("qweqwe").count() == 2)
         println(('a' + 10) + " " + ('A' + ('в' - 'а') - 1))
+        assertNotEquals(-1, "a".indexOf("a", 0, true))
+        println("frferf".toCharArray().joinToString(""))
     }
 
     @Test
@@ -69,7 +70,7 @@ Basic, Ruby, Swift.
                 countSubstrings("input/substrings_in1.txt", listOf("РАЗНЫЕ", "ные", "Неряшливость", "е", "эволюция")))
         assertEquals(mapOf("Карминовый" to 2, "Некрасивый" to 2, "белоглазый" to 1),
                 countSubstrings("input/substrings_in1.txt", listOf("Карминовый", "Некрасивый", "белоглазый")))
-        /*assertEquals(mapOf(
+        assertEquals(mapOf(
                 "ваббба" to 11,
                 "ХяХвхнвг" to 8,
                 "авюЫбЯэбб" to 16,
@@ -105,7 +106,7 @@ Basic, Ruby, Swift.
                         "аабаааТбв",
                         "аъбв",
                         "ацввбба",
-                        "бКбаЛбЧа")))*/
+                        "бКбаЛбЧа")))
     }
 
     @Test

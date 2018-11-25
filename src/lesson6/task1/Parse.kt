@@ -182,7 +182,7 @@ fun bestHighJump(jumps: String): Int {
     val correctResultSegmentRegex = Regex("(?:\\d+\\s[%\\-+]+\\s?)")
     var maxHeight = 0
     var currentStartIndex = 0
-    if (jumps.isNotEmpty()) {
+    if (jumps.isNotEmpty() && jumps.contains("+")) {
         while (currentStartIndex < jumps.length) {
             val result = correctResultSegmentRegex.find(jumps, currentStartIndex)
             if (result != null && result.range.start == currentStartIndex) {

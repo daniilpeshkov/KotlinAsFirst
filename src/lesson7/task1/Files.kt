@@ -59,10 +59,18 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
     bufferedReader.use { reader ->
         var input = reader.readLine()
         while (input != null) {
-            input = input.toLowerCase()
-            substrings.forEach {
-                substringsCount[input] = (substringsCount[input]
-                        ?: 0) + Regex("(?:$input)").findAll(it.toLowerCase()).count()
+            substrings.forEach { substring ->
+                var count = 0
+                var currentStartIndex = 0
+                while (currentStartIndex < input.length) {
+                    val index = input.indexOf(substring, currentStartIndex, true)
+                    if (index == -1) break
+                    else {
+                        currentStartIndex = index + substring.length
+                        count++
+                    }
+                }
+                substringsCount[substring] = (substringsCount[substring] ?: 0) + count
             }
             input = reader.readLine()
         }
@@ -85,14 +93,22 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
     File(outputName).bufferedWriter().use { writer ->
-        File(inputName).bufferedReader().useLines { line ->
-            val lineCharsArray = line.toMutableList()
-            Regex("[жЖчЧшШщЩ][ЫыЯяЮю]").findAll(inputName).forEach {
-                when {
-
+        File(inputName).bufferedReader().use { reader ->
+            for (line in reader.lines()) {
+                val chars = line.toCharArray()
+                for (i in 0 until chars.lastIndex) {
+                    if (chars[i] in setOf('Ш', 'ш', 'Щ', 'щ', 'Ч', 'ч', 'Ж', 'ж')) {
+                        chars[i + 1] = when (chars[i + 1]) {
+                            in setOf('ы', 'Ы') -> (chars[i + 1].toInt() - 'ы'.toInt() + 'и'.toInt()).toChar()
+                            in setOf('я', 'Я') -> (chars[i + 1].toInt() - 'я'.toInt() + 'а'.toInt()).toChar()
+                            in setOf('ю', 'Ю') -> (chars[i + 1].toInt() - 'ю'.toInt() + 'у'.toInt()).toChar()
+                            else -> chars[i + 1]
+                        }
+                    }
                 }
+                writer.write(chars.joinToString(""))
+                writer.newLine()
             }
         }
     }
