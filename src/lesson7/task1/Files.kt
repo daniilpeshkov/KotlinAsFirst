@@ -136,21 +136,25 @@ fun centerFile(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
         var maxLength = 0
         File(inputName).bufferedReader().useLines {
-            it.forEach { line ->
-                if (line.length > maxLength) maxLength = line.length
+            for (line in it) {
+                val tmp = line.trim()
+                if (tmp.length > maxLength) maxLength = tmp.length
             }
         }
         File(inputName).bufferedReader().useLines {
-            it.forEach { line ->
-                for (i in 1..(maxLength - line.length) / 2) {
+            for (line in it) {
+                val tmp = line.trim()
+                for (i in 1..(maxLength - tmp.length) / 2) {
                     writer.write(" ")
                 }
-                writer.write(line)
+                writer.write(tmp.trim())
                 writer.newLine()
             }
         }
     }
 }
+
+
 
 /**
  * Сложная

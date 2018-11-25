@@ -57,7 +57,7 @@ Basic, Ruby, Swift.
 
     @Test
     fun test() {
-        val a = listOf("a", "a", "b").groupingBy {it}.eachCount()
+        val a = listOf("a", "a", "b").groupingBy { it }.eachCount()
         val af = 5 + 5
     }
 
