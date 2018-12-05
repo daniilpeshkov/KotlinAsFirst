@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import lesson8.task1.circleByThreePoints
 import java.io.File
 
 /**
@@ -155,7 +156,6 @@ fun centerFile(inputName: String, outputName: String) {
 }
 
 
-
 /**
  * Сложная
  *
@@ -184,7 +184,37 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    //var maxLength = 0
+
+    var maxLength = 0
+    for (line in File(inputName).bufferedReader().lines()) {
+        val tmp = line.replace(Regex("\\s+"), " ").trim().length
+        if (tmp > maxLength) maxLength = tmp
+    }
+    File(outputName).bufferedWriter().use { writer ->
+        for (line in File(inputName).bufferedReader().lines()) {
+            val words = line.split(Regex("\\s+")).filter { it != "" }
+            when (words.size) {
+                1 -> writer.write(words[0])
+                else -> {
+                    var spacesCount = maxLength - words.sumBy { it.length }
+                    val averageSpaceSize = spacesCount / (words.size - 1)
+                    for ((index, value) in words.withIndex()) {
+                        writer.write(value)
+                        if (index != words.size - 1) {
+                            for (i in 1..averageSpaceSize) {
+                                writer.write(" ")
+                            }
+                            if (spacesCount % (words.size - 1) != 0) {
+                                writer.write(" ")
+                                spacesCount--
+                            }
+                        }
+                    }
+                }
+            }
+            writer.newLine()
+        }
+    }
 }
 
 /**
@@ -205,7 +235,17 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  * Ключи в ассоциативном массиве должны быть в нижнем регистре.
  *
  */
-fun top20Words(inputName: String): Map<String, Int> = TODO()
+fun top20Words(inputName: String): Map<String, Int> {
+    val wordsCount = mutableMapOf<String, Int>()
+    File(inputName).bufferedReader().lines().forEach { line ->
+        line.toLowerCase().split(Regex("[^а-яА-Яa-zA-ZёЁ]+"))
+                .filterNot { it == "" }.groupingBy { it }.eachCount()
+                .forEach { (key, value) ->
+                    wordsCount[key] = wordsCount.getOrDefault(key, 0) + value
+                }
+    }
+    return wordsCount.toList().filterNot { it.second == 1 }.sortedByDescending { it.second }.take(20).toMap()
+}
 
 /**
  * Средняя
@@ -243,7 +283,27 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+    fun getLowerCasedFromDictionaryOrNull(a: Char): String? {
+        var translate = dictionary[a.toLowerCase()]
+        if (translate == null) {
+            translate = dictionary[a.toUpperCase()]
+        }
+        return translate?.toLowerCase()
+    }
+    File(outputName).bufferedWriter().use { writer ->
+        File(inputName).bufferedReader().lines().forEach { line ->
+            line.chars().forEach {
+                var replacement = getLowerCasedFromDictionaryOrNull(it.toChar())
+                if (replacement != null) {
+                    if (it.toChar().isUpperCase()) {
+                        replacement = replacement.capitalize()
+                    }
+                } else replacement = it.toChar().toString()
+                writer.write(replacement)
+            }
+            writer.newLine()
+        }
+    }
 }
 
 /**
@@ -271,7 +331,23 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    val words = mutableListOf<String>()
+    var length = 0
+    File(inputName).bufferedReader().lines().forEach { line ->
+        if (line.length >= length) {
+            if (line.toLowerCase().toSet().size == line.length) {
+                if (line.length > length) {
+                    words.clear()
+                    length = line.length
+                }
+                words.add(line)
+            }
+        }
+    }
+    File(outputName).bufferedWriter().use {
+        it.write(words.joinToString(", "))
+        it.flush()
+    }
 }
 
 /**
