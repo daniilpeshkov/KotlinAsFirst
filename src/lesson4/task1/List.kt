@@ -3,7 +3,6 @@
 package lesson4.task1
 
 import lesson1.task1.discriminant
-import lesson2.task1.ageDescription
 import lesson3.task1.isPrime
 import kotlin.math.sqrt
 
@@ -273,17 +272,13 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun convertToString(n: Int, base: Int): String {
-    val digits = convert(n, base)
-    val iterator = digits.listIterator()
-    return List(digits.size) {
-        val i = iterator.next()
-        when {
-            i > 9 -> "${'a' + i - 10}"
-            else -> "$i"
-        }
-    }.joinToString("")
+fun convertToString(n: Int, base: Int): String = convert(n, base).joinToString("") {
+    when {
+        it > 9 -> "${'a' + it - 10}"
+        else -> "$it"
+    }
 }
+
 
 /**
  * Средняя
@@ -315,14 +310,15 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * Например: str = "13c", base = 14 -> 250
  */
 fun decimalFromString(str: String, base: Int): Int {
-    val iterator = str.iterator()
-    return decimal(List(str.length) {
-        val i = iterator.nextChar()
-        when {
-            i > '9' -> 10 + (i - 'a')
-            else -> i - '0'
+    val digits = mutableListOf<Int>()
+    str.chars().forEach {
+        digits.add(when {
+            it.toChar() > '9' -> 10 + (it.toChar() - 'a')
+            else -> it.toChar() - '0'
         }
-    }, base)
+        )
+    }
+    return decimal(digits, base)
 }
 
 /**

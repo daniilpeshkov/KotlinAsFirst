@@ -101,14 +101,11 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val a: MutableMap<String, String> = mapA.toMutableMap()
     for (i in mapB.keys) {
-        if (a.containsKey(i)) {
-            if (!a[i].equals(mapB[i])) {
-                a[i] = a[i] + ", " + mapB[i]
+        if (a[i] != null) {
+            if (a[i] != mapB[i]) {
+                a[i] = "${a[i]}, ${mapB[i]}"
             }
-        } else {
-            if (a[i] == null) a[i] = ""
-            a[i] = a[i] + mapB[i].toString()
-        }
+        } else a[i] = mapB.getValue(i)
     }
     return a.toMap()
 }
@@ -124,17 +121,12 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val studentsToGrade: MutableMap<Int, MutableSet<String>> = mutableMapOf()
-    for (i in grades.values) {
-        for (name in grades.keys) {
-            if (grades[name] == i) {
-                if (studentsToGrade[i] == null) studentsToGrade[i] = mutableSetOf()
-                studentsToGrade[i]!!.add(name)
-            }
-        }
-    }
+    val gradesToStudents: MutableMap<Int, MutableSet<String>> = mutableMapOf()
+    for ((student, mark) in grades)
+        gradesToStudents.getOrPut(mark) { mutableSetOf(student) }.add(student)
+
     val a: MutableMap<Int, List<String>> = mutableMapOf()
-    studentsToGrade.forEach { t, u -> a[t] = u.toList() }
+    gradesToStudents.forEach { t, u -> a[t] = u.toList() }
     return a
 }
 
@@ -150,12 +142,9 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
     for (keyA in a.keys) {
-        if (b.containsKey(keyA)) {
-            if (b[keyA] == a[keyA]) {
-                continue
-            }
+        if (b.containsKey(keyA) && b[keyA] != a[keyA]) {
+            return false
         }
-        return false
     }
     return true
 }
@@ -174,15 +163,13 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
     val k: MutableMap<String, Int> = mutableMapOf()
     val averagePrice: MutableMap<String, Double> = mutableMapOf()
     for ((name, worth) in stockPrices) {
-        if (k[name] == null) k[name] = 0
-        k[name] = k[name]!! + 1
-        if (averagePrice[name] == null) averagePrice[name] = 0.0
-        averagePrice[name] = averagePrice[name]!! + worth
+        k[name] = (k[name] ?: 0) + 1
+        averagePrice[name] = (averagePrice[name] ?: 0.0) + worth
     }
     for (i in averagePrice.keys) {
         averagePrice[i] = averagePrice[i]!! / k[i]!!.toDouble()
     }
-    return averagePrice.toMap()
+    return averagePrice
 }
 
 /**
@@ -201,14 +188,12 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *   ) -> "Мария"
  */
 fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    var min = Double.MAX_VALUE
+    var min: Double? = null
     var name: String? = null
     for ((curName, typeAndPrice) in stuff) {
-        if (typeAndPrice.first == kind) {
-            if (typeAndPrice.second <= min) {
-                min = typeAndPrice.second
-                name = curName
-            }
+        if (typeAndPrice.first == kind && (min == null || typeAndPrice.second <= min)) {
+            min = typeAndPrice.second
+            name = curName
         }
     }
     return name
@@ -299,13 +284,8 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>): Unit {
  *
  * Для двух списков людей найти людей, встречающихся в обоих списках
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
-    val inBoth = mutableSetOf<String>()
-    for (entry in a) {
-        if (b.contains(entry)) inBoth.add(entry)
-    }
-    return inBoth.toList()
-}
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b).toList()
+
 
 /**
  * Средняя
@@ -357,8 +337,9 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
 fun hasAnagrams(words: List<String>): Boolean {
     for (i in 0 until words.lastIndex) {
         for (j in i + 1..words.lastIndex) {
-            if (words[i].split("").groupingBy { it }.eachCount()
-                    == words[j].split("").groupingBy { it }.eachCount()) return true
+            if (words[i].toList().sortedDescending() == words[j].toList().sortedDescending()) {
+                return true
+            }
         }
     }
     return false

@@ -2,7 +2,6 @@
 
 package lesson7.task1
 
-import lesson8.task1.circleByThreePoints
 import java.io.File
 
 /**
@@ -394,7 +393,19 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    File(outputName).bufferedWriter().use { writer ->
+        var boldOpened = false          // ** <b>
+        var italicOpened = false           // * <i>
+        var paragraphOpened = false        // <p>
+        var strikeThroughOpened = false    // ~~
+        writer.write("<html>")
+        writer.newLine()
+        writer.write("<body>")
+        writer.newLine()
+        var tmpIndex = 0
+
+     }
+
 }
 
 /**

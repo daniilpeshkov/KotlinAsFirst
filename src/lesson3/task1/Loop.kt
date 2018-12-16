@@ -143,17 +143,7 @@ fun maxDivisor(n: Int): Int = n / minDivisor(n)
  * Взаимно простые числа не имеют общих делителей, кроме 1.
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
-fun isCoPrime(m: Int, n: Int): Boolean = minCommonFactor(m, n) == 1
-
-fun minCommonFactor(a: Int, b: Int): Int {
-    var m = a
-    var n = b
-    while (m != n) {
-        if (m > n) m -= n
-        else n -= m
-    }
-    return m
-}
+fun isCoPrime(m: Int, n: Int): Boolean = m * n / lcm(m, n) == 1
 
 /**
  * Простая
@@ -304,17 +294,17 @@ fun hasDifferentDigits(n: Int): Boolean {
  */
 fun squareSequenceDigit(n: Int): Int {
     var k = 1
-    var prev_len = 1
-    while (prev_len < n) {
+    var prevLen = 1
+    while (prevLen < n) {
         k += 1
-        prev_len += digitNumber(sqr(k))
+        prevLen += digitNumber(sqr(k))
     }
-    var cur_square = sqr(k)
-    val dif = prev_len - n
+    var curSquare = sqr(k)
+    val dif = prevLen - n
     for (i in 1..dif) {
-        cur_square /= 10
+        curSquare /= 10
     }
-    return cur_square % 10
+    return curSquare % 10
 }
 
 /**

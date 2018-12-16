@@ -3,6 +3,7 @@ package lesson2.task1
 
 import lesson1.task1.discriminant
 import lesson1.task1.sqr
+import java.lang.Math.pow
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -66,16 +67,12 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
 fun ageDescription(age: Int): String {
-    if (age % 100 in 5..20) {
-        return age.toString() + " лет"
-    } else {
-        return age.toString() + when (age % 10) {
-            1 -> " год"
-            in 2..4 -> " года"
-            in 5..9 -> " лет"
-            0 -> " лет"
-            else -> ""
-        }
+    val ageMod100 = age % 100
+    return age.toString() + when {
+        ageMod100 in 11..20 || ageMod100 % 10 in 5..9 || ageMod100 % 10 == 0 -> " лет"
+        ageMod100 % 10 == 1 -> " год"
+        ageMod100 % 10 in 2..4 -> " года"
+        else -> ""
     }
 }
 
@@ -149,14 +146,13 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     val max = maxOf(a, b, c)
     val min = minOf(a, b, c)
     val average = a + b + c - max - min
-    return if (min + average > max) {
-        when {
-            max * max == min * min + average * average -> 1
-            max * max > min * min + average * average -> 2
-            else -> 0
-        }
-    } else {
-        -1
+    val sumSquared = min * min + average * average
+    val maxSquared = max * max
+    return when {
+        maxSquared == sumSquared -> 1
+        maxSquared > sumSquared && max < min + average -> 2
+        maxSquared < sumSquared -> 0
+        else -> -1
     }
 }
 
