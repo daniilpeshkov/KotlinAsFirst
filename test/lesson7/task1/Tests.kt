@@ -57,15 +57,6 @@ Basic, Ruby, Swift.
     }
 
     @Test
-    fun test() {
-        val b = "ervevver!!! 4freeg 34teDDerv4       &&&&&frfrf/.".split(Regex("[^a-zA-Z]+"))
-        val a = listOf("a", "a", "b").groupingBy { it }.eachCount()
-        val af = 5 + 5
-        val aff = List(5) { 0 }
-        println("33334".count { it == '3' })
-    }
-
-    @Test
     @Tag("Normal")
     fun countSubstrings() {
         assertEquals(mapOf("аб" to 21), countSubstrings("input/test2.txt", listOf("аб")))
@@ -246,6 +237,10 @@ Basic, Ruby, Swift.
         File("temp.txt").delete()
     }
 
+    @Test
+    fun a() {
+        Regex("((?<=[^\\*]|^)\\*\\*?)").findAll("*** **").forEach { println(it.value) }
+    }
 
     private fun checkHtmlSimpleExample() {
         val result = File("temp.html").readText().replace(Regex("[\\s\\n\\t]"), "")

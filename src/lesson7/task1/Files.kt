@@ -3,6 +3,8 @@
 package lesson7.task1
 
 import java.io.File
+import java.lang.StringBuilder
+import java.util.*
 
 /**
  * Пример
@@ -192,21 +194,20 @@ fun alignFileByWidth(inputName: String, outputName: String) {
     File(outputName).bufferedWriter().use { writer ->
         for (line in File(inputName).bufferedReader().lines()) {
             val words = line.split(Regex("\\s+")).filter { it != "" }
-            when (words.size) {
-                1 -> writer.write(words[0])
-                else -> {
-                    var spacesCount = maxLength - words.sumBy { it.length }
-                    val averageSpaceSize = spacesCount / (words.size - 1)
-                    for ((index, value) in words.withIndex()) {
-                        writer.write(value)
-                        if (index != words.size - 1) {
-                            for (i in 1..averageSpaceSize) {
-                                writer.write(" ")
-                            }
-                            if (spacesCount % (words.size - 1) != 0) {
-                                writer.write(" ")
-                                spacesCount--
-                            }
+            if (words.size == 1) {
+                writer.write(words[0])
+            } else {
+                var spacesCount = maxLength - words.sumBy { it.length }
+                val averageSpaceSize = spacesCount / (words.size - 1)
+                for ((index, value) in words.withIndex()) {
+                    writer.write(value)
+                    if (index != words.size - 1) {
+                        for (i in 1..averageSpaceSize) {
+                            writer.write(" ")
+                        }
+                        if (spacesCount % (words.size - 1) != 0) {
+                            writer.write(" ")
+                            spacesCount--
                         }
                     }
                 }
@@ -215,6 +216,7 @@ fun alignFileByWidth(inputName: String, outputName: String) {
         }
     }
 }
+
 
 /**
  * Средняя
@@ -349,6 +351,13 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     }
 }
 
+fun parseTags(line: String): String {
+    val stringBuilder = StringBuilder(line)
+    val d = Regex("de").findAll(stringBuilder).sortedBy { it.range.first }
+    // d.drop()
+    return ""
+}
+
 /**
  * Сложная
  *
@@ -393,19 +402,41 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
+
+    fun toHtmlTag(tag: String, opened: Boolean): String {
+        when (tag) {
+            "*" -> {
+                return if (opened) "<i>" else "</i>"
+            }
+            "**" -> {
+                return if (opened) "<b>" else "</b>"
+            }
+            "~~" -> {
+                return if (opened) "<s>" else "</s>"
+            }
+        }
+        return ""
+    }
+
     File(outputName).bufferedWriter().use { writer ->
-        var boldOpened = false          // ** <b>
-        var italicOpened = false           // * <i>
-        var paragraphOpened = false        // <p>
-        var strikeThroughOpened = false    // ~~
         writer.write("<html>")
         writer.newLine()
         writer.write("<body>")
         writer.newLine()
-        var tmpIndex = 0
+        val openedTags = Stack<String>()
+        File(inputName).bufferedReader().lines().forEach { line ->
+            if (line.isNotEmpty()) {
+            } else {
 
-     }
+            }
 
+            writer.newLine()
+        }
+        writer.write("</body>")
+        writer.newLine()
+        writer.write("</html>")
+        writer.newLine()
+    }
 }
 
 /**

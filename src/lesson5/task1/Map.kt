@@ -2,6 +2,7 @@
 
 package lesson5.task1
 
+import java.lang.StringBuilder
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -99,15 +100,15 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *   ) -> mapOf("Emergency" to "112, 911", "Police" to "02")
  */
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
-    val a: MutableMap<String, String> = mapA.toMutableMap()
-    for (i in mapB.keys) {
-        if (a[i] != null) {
-            if (a[i] != mapB[i]) {
-                a[i] = "${a[i]}, ${mapB[i]}"
-            }
-        } else a[i] = mapB.getValue(i)
+    val mergedBook = mutableMapOf<String, MutableSet<String?>>()
+    for (key in (mapB.keys + mapA.keys)) {
+        mergedBook.getOrPut(key) { mutableSetOf(mapA[key], mapB[key]) }.addAll(setOf(mapA[key], mapB[key]))
     }
-    return a.toMap()
+    val mergedBookWithStrings = mutableMapOf<String, String>()
+    mergedBook.forEach {
+        mergedBookWithStrings[it.key] = it.value.filterNot { it == null }.joinToString(", ")
+    }
+    return mergedBookWithStrings
 }
 
 /**
@@ -141,6 +142,7 @@ fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
  *   containsIn(mapOf("a" to "z"), mapOf("a" to "zee", "b" to "sweet")) -> false
  */
 fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean {
+
     for (keyA in a.keys) {
         if (b.containsKey(keyA) && b[keyA] != a[keyA]) {
             return false
@@ -236,10 +238,11 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         handshakesWay.push(currentName)
         val passedPersons = mutableMapOf<String, Boolean>()
         while (handshakesWay.isNotEmpty()) {
-            passedPersons[handshakesWay.peek()] = true
+            val top = handshakesWay.peek()
+            passedPersons[top] = true
             var foundNext = false
-            if (friends[handshakesWay.peek()] != null) {
-                for (next in friends[handshakesWay.peek()]!!) {
+            if (friends[top] != null) {
+                for (next in friends.getOrDefault(top, setOf())) {
                     if (!(passedPersons[next] ?: false)) {
                         foundNext = true
                         currentPersonDating.add(next)
@@ -298,7 +301,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().int
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean =
         if (word == "") true
-        else word.toLowerCase().toCharArray().toSet() == chars.toSet()
+        else word.toLowerCase().toCharArray().toSet() == chars.map { it.toLowerCase() }.toSet()
 
 
 /**
@@ -337,14 +340,13 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
 fun hasAnagrams(words: List<String>): Boolean {
     for (i in 0 until words.lastIndex) {
         for (j in i + 1..words.lastIndex) {
-            if (words[i].toList().sortedDescending() == words[j].toList().sortedDescending()) {
+            if (words[i].toList().sortedDescending().containsAll(words[j].toList().sortedDescending())) {
                 return true
             }
         }
     }
     return false
 }
-
 
 /**
  * Сложная
@@ -364,17 +366,21 @@ fun hasAnagrams(words: List<String>): Boolean {
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in list.indices.first until list.indices.last) {
-        for (j in i + 1..list.indices.last) {
-            if (i != j) {
-                if (list[i] + list[j] == number) {
-                    return Pair(min(i, j), max(i, j))
-                }
+    val a = list.mapIndexed { index, i -> Pair(i, index) }
+            .sortedBy { it.first }.groupBy({ it.first }, { it.second })
+    for ((key, indices) in a) {
+        val tmpList = a[number - key]
+        if (tmpList != null) {
+            if (indices === tmpList && tmpList.size > 1) {
+                return Pair(indices[0], indices[1])
+            } else if (indices !== tmpList) {
+                return Pair(indices[0], tmpList[0])
             }
         }
     }
     return Pair(-1, -1)
 }
+
 
 /**
  * Очень сложная

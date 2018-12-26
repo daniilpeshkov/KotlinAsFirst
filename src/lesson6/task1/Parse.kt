@@ -103,24 +103,24 @@ fun dateStrToDigit(str: String): String {
 fun dateDigitToStr(digital: String): String {
     val numbers = digital.split(".")
     val numberRegex = Regex("\\d+")
-    if (numbers.size == 3 && numbers.all { numberRegex.matches(it) }) {
-        if (numbers[0].toInt() <= daysInMonth(numbers[1].toInt(), numbers[2].toInt()) && numbers[1].toInt() in 1..12) {
-            return "${numbers[0].replace(Regex("0(?=\\d)"), "")} ${when (numbers[1]) {
-                "01" -> "января"
-                "02" -> "февраля"
-                "03" -> "марта"
-                "04" -> "апреля"
-                "05" -> "мая"
-                "06" -> "июня"
-                "07" -> "июля"
-                "08" -> "августа"
-                "09" -> "сентября"
-                "10" -> "октября"
-                "11" -> "ноября"
-                "12" -> "декабря"
-                else -> ""
-            }} ${numbers[2]}"
-        }
+    if (numbers.size == 3 && numbers.all { numberRegex.matches(it) }
+            && numbers[0].toInt() <= daysInMonth(numbers[1].toInt(), numbers[2].toInt())
+            && numbers[1].toInt() in 1..12) {
+        return "${numbers[0].replace(Regex("0(?=\\d)"), "")} ${when (numbers[1]) {
+            "01" -> "января"
+            "02" -> "февраля"
+            "03" -> "марта"
+            "04" -> "апреля"
+            "05" -> "мая"
+            "06" -> "июня"
+            "07" -> "июля"
+            "08" -> "августа"
+            "09" -> "сентября"
+            "10" -> "октября"
+            "11" -> "ноября"
+            "12" -> "декабря"
+            else -> ""
+        }} ${numbers[2]}"
     }
     return ""
 }
@@ -137,14 +137,12 @@ fun dateDigitToStr(digital: String): String {
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String {
-    val number = phone.replace(Regex("[()\\-\\s]+"), "")
-    return if (Regex("[+]?[0-9]+").matches(number)) {
-        number
-    } else {
-        ""
-    }
-}
+fun flattenPhoneNumber(phone: String): String =
+        if (Regex("\\s*(?:\\+[0-9]+)?\\s*(?:\\([0-9]+\\))?[0-9\\s\\-]+").matches(phone)) {
+            phone.replace(Regex("[()\\-\\s]+"), "")
+        } else
+            ""
+
 
 /**
  * Средняя
@@ -264,11 +262,11 @@ fun firstDuplicateIndex(str: String): Int {
 fun mostExpensive(description: String): String {
     if (Regex("(?:[^;]+\\s\\d+(?:.\\d+)?;\\s)*(?:[^;]+\\s\\d+(?:.\\d+)?)")
                     .matches(description)) {
-        var max = 0.0f
+        var max = 0.0
         var maxName = ""
         for (product in description.split("; ")) {
             val tmpList = product.split(" ")
-            val tmp = tmpList[1].toFloat()
+            val tmp = tmpList[1].toDouble()
             if (tmp >= max) {
                 max = tmp
                 maxName = tmpList[0]
