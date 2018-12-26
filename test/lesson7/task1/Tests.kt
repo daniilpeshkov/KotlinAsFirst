@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
-import java.util.*
 
 class Tests {
 
@@ -237,9 +236,16 @@ Basic, Ruby, Swift.
         File("temp.txt").delete()
     }
 
+    fun TestparseTags(line: String): String = line.replace(Regex("~~([^~]*)~~"), "<s>$1</s>")
+            .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
+            .replace(Regex("\\*{3}([^\\*]+)\\*([^\\*]*)\\*{2}"), "<b><i>$1</i>$2</b>")
+            .replace(Regex("\\*([^\\*]*)\\*"), "<i>$1</i>")
+            .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
+
     @Test
     fun a() {
-        Regex("((?<=[^\\*]|^)\\*\\*?)").findAll("*** **").forEach { println(it.value) }
+        print(TestparseTags("********"))
+        assertEquals("<i>aaa<b>aaa</b></i>aaa<i>aaa<b>aaa</b>aaa</i>", TestparseTags("*aaa**aaa***aaa*aaa**aaa**aaa*"))
     }
 
     private fun checkHtmlSimpleExample() {

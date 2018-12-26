@@ -351,12 +351,12 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     }
 }
 
-fun parseTags(line: String): String {
-    val stringBuilder = StringBuilder(line)
-    val d = Regex("de").findAll(stringBuilder).sortedBy { it.range.first }
-    // d.drop()
-    return ""
-}
+fun parseTags(line: String): String = line.replace(Regex("~~([^~]*)~~"), "<s>$1</s>")
+        .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
+        .replace(Regex("\\*{3}([^\\*]+)\\*([^\\*]*)\\*{2}"), "<b><i>$1</i>$2</b>")
+        .replace(Regex("\\*([^\\*]*)\\*"), "<i>$1</i>")
+        .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
+
 
 /**
  * Сложная
@@ -402,36 +402,26 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-
-    fun toHtmlTag(tag: String, opened: Boolean): String {
-        when (tag) {
-            "*" -> {
-                return if (opened) "<i>" else "</i>"
-            }
-            "**" -> {
-                return if (opened) "<b>" else "</b>"
-            }
-            "~~" -> {
-                return if (opened) "<s>" else "</s>"
-            }
-        }
-        return ""
-    }
-
     File(outputName).bufferedWriter().use { writer ->
         writer.write("<html>")
         writer.newLine()
         writer.write("<body>")
         writer.newLine()
-        val openedTags = Stack<String>()
+        writer.write("<p>")
+        writer.newLine()
         File(inputName).bufferedReader().lines().forEach { line ->
             if (line.isNotEmpty()) {
+                writer.write(parseTags(line))
             } else {
-
+                writer.write("</p>")
+                writer.newLine()
+                writer.write("<p>")
             }
-
             writer.newLine()
         }
+
+        writer.write("</p>")
+        writer.newLine()
         writer.write("</body>")
         writer.newLine()
         writer.write("</html>")
