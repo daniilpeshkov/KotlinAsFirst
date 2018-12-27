@@ -340,7 +340,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
 fun hasAnagrams(words: List<String>): Boolean {
     for (i in 0 until words.lastIndex) {
         for (j in i + 1..words.lastIndex) {
-            if (words[i].toList().sortedDescending().containsAll(words[j].toList().sortedDescending())) {
+            if (words[i].toList().sortedDescending() == words[j].toList().sortedDescending()) {
                 return true
             }
         }
