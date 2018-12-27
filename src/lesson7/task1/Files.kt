@@ -351,11 +351,11 @@ fun chooseLongestChaoticWord(inputName: String, outputName: String) {
     }
 }
 
-fun parseTags(line: String): String = line.replace(Regex("~~([^~]*)~~"), "<s>$1</s>")
-        .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
-        .replace(Regex("\\*{3}([^\\*]+)\\*([^\\*]*)\\*{2}"), "<b><i>$1</i>$2</b>")
-        .replace(Regex("\\*([^\\*]*)\\*"), "<i>$1</i>")
-        .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
+fun parseTags(line: String): String =
+        line.replace(Regex("~~([^~]*)~~"), "<s>$1</s>")
+                .replace(Regex("\\*{2}((?:[^\\*(?:<b>)(?:</b>)]*(?:\\*[^\\*(?:<b>)(?:</b>)]+\\*)*[^\\*(?:<b>)(?:</b>)]*)*)\\*{2}"), "<b>$1</b>")
+                .replace(Regex("\\*([^\\*]+)\\*"), "<i>$1</i>")
+                .replace(Regex("\\*{2}((?:[^\\*(?:<b>)(?:</b>)]*(?:\\*[^\\*(?:<b>)(?:</b>)]+\\*)*[^\\*(?:<b>)(?:</b>)]*)*)\\*{2}"), "<b>$1</b>")
 
 
 /**

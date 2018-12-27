@@ -171,7 +171,7 @@ Basic, Ruby, Swift.
     @Test
     @Tag("Normal")
     fun top20Words() {
-      //  assertEquals(mapOf<String, Int>(), top20Words("input/empty.txt"))
+        //  assertEquals(mapOf<String, Int>(), top20Words("input/empty.txt"))
         assertEquals(mapOf(
                 "привет" to 4,
                 "все" to 3,
@@ -236,15 +236,17 @@ Basic, Ruby, Swift.
         File("temp.txt").delete()
     }
 
-    fun TestparseTags(line: String): String = line.replace(Regex("~~([^~]*)~~"), "<s>$1</s>")
-            .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
-            .replace(Regex("\\*{3}([^\\*]+)\\*([^\\*]*)\\*{2}"), "<b><i>$1</i>$2</b>")
-            .replace(Regex("\\*([^\\*]*)\\*"), "<i>$1</i>")
-            .replace(Regex("\\*{2}([^\\*(?:<b>)(?:</b>)]*)\\*{2}"), "<b>$1</b>")
+    fun TestparseTags(line: String): String =
+            line.replace(Regex("~~([^~]*)~~"), "<s>$1</s>")
+                    .replace(Regex("\\*{2}((?:[^\\*(?:<b>)(?:</b>)]*(?:\\*[^\\*(?:<b>)(?:</b>)]+\\*)*[^\\*(?:<b>)(?:</b>)]*)*)\\*{2}"), "<b>$1</b>")
+                    .replace(Regex("\\*([^\\*]+)\\*"), "<i>$1</i>")
+                    .replace(Regex("\\*{2}((?:[^\\*(?:<b>)(?:</b>)]*(?:\\*[^\\*(?:<b>)(?:</b>)]+\\*)*[^\\*(?:<b>)(?:</b>)]*)*)\\*{2}"), "<b>$1</b>")
+
 
     @Test
     fun a() {
-        print(TestparseTags("********"))
+        print(TestparseTags("*aaa***aaa*aaa***"))
+        assertEquals("<b>aaa<i>aaa</i></b>aaa<b>aaa</b>", TestparseTags("**aaa*aaa***aaa**aaa**"))
         assertEquals("<i>aaa<b>aaa</b></i>aaa<i>aaa<b>aaa</b>aaa</i>", TestparseTags("*aaa**aaa***aaa*aaa**aaa**aaa*"))
     }
 
