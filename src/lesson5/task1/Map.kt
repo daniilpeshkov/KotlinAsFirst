@@ -370,13 +370,12 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
             .sortedBy { it.first }.groupBy({ it.first }, { it.second })
     for ((key, indices) in a) {
         val tmpList = a[number - key]
-        if (tmpList != null) {
-            if (indices === tmpList && tmpList.size > 1) {
-                return Pair(indices[0], indices[1])
-            } else if (indices !== tmpList) {
-                return Pair(indices[0], tmpList[0])
-            }
+        if (indices === tmpList && tmpList.size > 1) {
+            return Pair(indices[0], indices[1])
+        } else if (tmpList != null && indices !== tmpList) {
+            return Pair(indices[0], tmpList[0])
         }
+
     }
     return Pair(-1, -1)
 }

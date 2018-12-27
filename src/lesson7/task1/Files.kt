@@ -245,7 +245,7 @@ fun top20Words(inputName: String): Map<String, Int> {
                     wordsCount[key] = wordsCount.getOrDefault(key, 0) + value
                 }
     }
-    return wordsCount.toList().filterNot { it.second == 1 }.sortedByDescending { it.second }.take(20).toMap()
+    return wordsCount.toList().sortedByDescending { it.second }.take(20).toMap()
 }
 
 /**
